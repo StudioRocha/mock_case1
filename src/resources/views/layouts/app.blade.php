@@ -16,6 +16,8 @@
         <header class="l-header">
             <div class="l-header__inner">
                 <div class="p-header">
+                    @php($isAuthPage = request()->routeIs('login') ||
+                    request()->routeIs('register'))
                     <div class="p-header__left">
                         <a href="/" class="p-header__logo">
                             <img
@@ -25,6 +27,7 @@
                             />
                         </a>
                     </div>
+                    @unless($isAuthPage)
                     <div class="p-header__center">
                         <form
                             action="{{ route('items.index') }}"
@@ -55,25 +58,21 @@
                     </div>
                     <div class="p-header__right">
                         <nav class="p-header__nav c-nav">
-                            @guest
-                            <a class="c-nav__link" href="/login">ログイン</a>
-                            <a class="c-nav__link" href="/mypage">マイページ</a>
-                            @endguest @auth
-                            <a class="c-nav__link" href="/mypage">マイページ</a>
+                            @auth
                             <form
                                 method="POST"
                                 action="/logout"
-                                class="d-inline"
+                                class="p-header__auth"
                             >
                                 @csrf
-                                <button
-                                    type="submit"
-                                    class="btn btn-link c-nav__link p-0 align-baseline"
-                                >
+                                <button type="submit" class="c-nav__link">
                                     ログアウト
                                 </button>
                             </form>
+                            @else
+                            <a class="c-nav__link" href="/login">ログイン</a>
                             @endauth
+                            <a class="c-nav__link" href="/mypage">マイページ</a>
                             <a
                                 class="c-button c-button--primary btn btn-dark"
                                 href="/sell"
@@ -81,6 +80,7 @@
                             >
                         </nav>
                     </div>
+                    @endunless
                 </div>
             </div>
         </header>

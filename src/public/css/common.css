@@ -1,4 +1,7 @@
 /* Layout */
+:root {
+    --header-height: 64px;
+}
 .l-body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
         "Helvetica Neue", Arial, "Noto Sans JP", "Hiragino Kaku Gothic ProN",
@@ -13,11 +16,15 @@
     max-width: 1440px;
     margin: 0 auto;
     padding: 12px 24px;
+    min-height: 64px; /* ヘッダー高さを固定（表示/非表示に関わらず） */
 }
 .l-main {
-    padding: 24px 24px 48px;
+    padding: clamp(12px, 2vw, 24px) clamp(12px, 2vw, 24px)
+        clamp(24px, 3vw, 48px);
+    min-height: calc(100vh - var(--header-height));
 }
 .l-container {
+    width: 100%;
     max-width: 1440px;
     margin: 0 auto;
 }
@@ -28,6 +35,7 @@
     grid-template-columns: 220px 1fr auto;
     align-items: center;
     gap: 16px;
+    min-height: 40px; /* ナビ高さを統一 */
 }
 .p-header__left {
     display: flex;
@@ -49,7 +57,7 @@
     text-decoration: none;
 }
 .p-header__logo-img {
-    height: clamp(18px, 2.4vw, 28px);
+    height: clamp(18px, 2.4vw, 22px);
     width: auto;
     display: block;
 }
@@ -69,12 +77,26 @@
     align-items: center;
     gap: 16px;
 }
+.p-header__auth {
+    display: inline;
+    margin: 0;
+}
 .c-nav__link {
     color: #fff;
     text-decoration: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
 }
 .c-nav__link:hover {
     color: #ddd;
+}
+.p-header__auth .c-nav__link {
+    background: transparent;
+    border: none;
+    padding: 0;
+    -webkit-appearance: none;
+    appearance: none;
 }
 .c-button {
     display: inline-flex;
@@ -93,12 +115,12 @@
 /* Tabs */
 .p-tabs {
     display: flex;
-    gap: 16px;
+    gap: clamp(8px, 1.5vw, 16px);
     border-bottom: 1px solid #e5e5e5;
-    margin: 16px 0 24px;
+    margin: clamp(8px, 2vw, 16px) 0 clamp(12px, 2.5vw, 24px);
 }
 .p-tabs__tab {
-    padding: 12px 8px;
+    padding: clamp(8px, 1.2vw, 12px) clamp(6px, 1vw, 8px);
     text-decoration: none;
     color: #999;
     border-bottom: 2px solid transparent;
@@ -112,7 +134,22 @@
 .p-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 40px 32px;
+    gap: clamp(16px, 2.5vw, 40px) clamp(12px, 2vw, 32px);
+}
+@media (max-width: 1200px) {
+    .p-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+@media (max-width: 900px) {
+    .p-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media (max-width: 600px) {
+    .p-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* Card */
@@ -151,7 +188,7 @@
 }
 .c-card__name {
     margin-top: 8px;
-    font-size: 14px;
+    font-size: clamp(13px, 1.2vw, 14px);
 }
 
 .c-empty {
@@ -164,4 +201,50 @@
     .l-container {
         max-width: 1440px;
     }
+}
+
+/* Forms */
+/* フォーム全体の幅 */
+.p-auth {
+    max-width: 540px;
+    margin: 32px auto 64px;
+}
+.p-auth__title {
+    font-size: clamp(22px, 2.2vw, 28px);
+    font-weight: 700;
+    text-align: center;
+    margin: 16px 0 24px;
+}
+.p-form {
+    display: grid;
+    gap: clamp(16px, 2.2vw, 30px);
+}
+.p-form__group {
+    display: grid;
+    gap: 8px;
+}
+.p-form__label {
+    font-weight: 700;
+}
+.p-form__control {
+    height: clamp(36px, 3.2vw, 44px);
+    padding: 0 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+.p-form__error {
+    color: #e60033;
+    font-size: 12px;
+}
+.p-form__submit {
+    width: 100%;
+    height: 44px;
+    margin-top: 34px;
+    background: #f12b2b;
+    color: #fff;
+    border: none;
+}
+.p-auth__link {
+    text-align: center;
+    margin-top: 24px;
 }
