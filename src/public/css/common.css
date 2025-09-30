@@ -236,6 +236,41 @@
     color: #e60033;
     font-size: 12px;
 }
+.c-button--outline-danger {
+    border: 1px solid #f12b2b;
+    color: #f12b2b;
+    background: transparent;
+    padding: 6px 10px;
+    border-radius: 6px;
+}
+.c-button--outline-danger:hover {
+    background: #f12b2b;
+    color: #fff;
+}
+.p-avatar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.p-avatar__thumb {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: #ddd;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.p-avatar__bg {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+}
+.p-avatar__input {
+    display: none;
+}
 .p-form__submit {
     width: 100%;
     height: 44px;
@@ -247,4 +282,29 @@
 .p-auth__link {
     text-align: center;
     margin-top: 24px;
+}
+
+/* MyPage */
+.p-mypage {
+    max-width: 1000px;
+    margin: 24px auto 64px;
+}
+.p-mypage__header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: flex-start;
+    padding: 0 clamp(12px, 6vw, 80px);
+    margin-bottom: 24px;
+}
+.p-mypage__header .c-button--outline-danger {
+    margin-left: auto;
+}
+.p-mypage__name {
+    font-size: 30px;
+    font-weight: 700;
+}
+.p-mypage__tabs {
+    justify-content: flex-start;
+    margin-top: 8px;
 }

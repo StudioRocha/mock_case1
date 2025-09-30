@@ -11,23 +11,32 @@
     >
         @csrf @method('put')
         <div class="p-form__group">
-            <label class="p-form__label">プロフィール画像</label>
-            <input
-                class="p-form__control"
-                type="file"
-                name="avatar"
-                accept="image/jpeg,image/png"
-            />
-            <div class="p-form__hint">拡張子: jpg/png</div>
-            @if(optional($profile)->avatar_paths)
-            <div>
-                <img
-                    src="{{ asset('storage/'. $profile->avatar_paths) }}"
-                    alt="avatar"
-                    style="max-width: 120px"
-                />
+            <label class="p-form__label"></label>
+            <div class="p-avatar">
+                <div class="p-avatar__thumb">
+                    <div
+                        id="js-avatar-preview"
+                        class="p-avatar__bg"
+                        style="@if(optional($profile)->avatar_paths) background-image: url('{{ asset('storage/'. $profile->avatar_paths) }}') @endif"
+                    ></div>
+                </div>
+                <div class="p-avatar__pick">
+                    <input
+                        id="avatar"
+                        class="p-avatar__input"
+                        type="file"
+                        name="avatar"
+                        accept="image/jpeg,image/png"
+                    />
+                    <label
+                        for="avatar"
+                        class="c-button c-button--outline-danger"
+                        >画像を選択する</label
+                    >
+                </div>
             </div>
-            @endif @error('avatar')
+            <div class="p-form__hint"></div>
+            @error('avatar')
             <div class="p-form__error">{{ $message }}</div>
             @enderror
         </div>
@@ -90,5 +99,21 @@
             更新する
         </button>
     </form>
+    <script>
+        (function () {
+            const input = document.getElementById("avatar");
+            const box = document.getElementById("js-avatar-preview");
+            if (!input || !box) return;
+            input.addEventListener("change", function (e) {
+                const file = e.target.files && e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = function (ev) {
+                    box.style.backgroundImage = "url(" + ev.target.result + ")";
+                };
+                reader.readAsDataURL(file);
+            });
+        })();
+    </script>
     @endsection
 </div>
