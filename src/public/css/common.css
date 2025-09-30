@@ -1,3 +1,19 @@
+.p-sell {
+    max-width: 720px;
+    margin: 24px auto 64px;
+}
+.p-sell__section-title {
+    margin: 24px 0 8px;
+    font-weight: 700;
+    font-size: 18px;
+}
+.p-upload {
+    display: flex;
+    align-items: center;
+}
+.p-upload__input {
+    display: none;
+}
 /* Layout */
 :root {
     --header-height: 64px;
@@ -125,7 +141,7 @@
     color: #999;
     border-bottom: 2px solid transparent;
 }
-.p-tabs__tab.is-active {
+.p-tabs__tab--active {
     color: #e60033;
     border-bottom-color: #e60033;
 }
@@ -195,6 +211,29 @@
     color: #777;
 }
 
+/* Alerts */
+.c-alert {
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin: 8px 0 16px;
+    font-size: 14px;
+}
+.c-alert--success {
+    background: #e6f6ec;
+    color: #0b6b34;
+    border: 1px solid #bfe8cf;
+}
+.c-alert--error {
+    background: #fdecea;
+    color: #b42318;
+    border: 1px solid #f5c2c0;
+}
+.c-alert--info {
+    background: #eef4ff;
+    color: #1c3faa;
+    border: 1px solid #c8d8ff;
+}
+
 /* PC-first width safety */
 @media (min-width: 1400px) and (max-width: 1540px) {
     .l-header__inner,
@@ -232,9 +271,46 @@
     border: 1px solid #ccc;
     border-radius: 6px;
 }
+/* textarea は固定高さを解除し、十分な最小高さを確保 */
+textarea.p-form__control {
+    height: auto;
+    min-height: 120px;
+    padding: 12px;
+    line-height: 1.6;
+}
 .p-form__error {
     color: #e60033;
     font-size: 12px;
+}
+.p-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 10px;
+}
+.c-tag {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+}
+.c-tag input {
+    display: none;
+}
+.c-tag span {
+    display: inline-block;
+    padding: 6px 12px;
+    border: 1px solid #f12b2b;
+    border-radius: 9999px;
+    background: #fff;
+    color: #f12b2b;
+    line-height: 1;
+}
+.c-tag span:hover {
+    border-color: #e60033;
+}
+.c-tag input:checked + span {
+    background: #f12b2b;
+    color: #fff;
+    border-color: #f12b2b;
 }
 .c-button--outline-danger {
     border: 1px solid #f12b2b;

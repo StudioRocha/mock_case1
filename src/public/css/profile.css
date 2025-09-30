@@ -1,0 +1,11 @@
+/* プロフィール画面の微調整（共通の .p-form/.p-avatar ベース） */
+.p-avatar {
+    justify-content: center;
+}
+.p-avatar__thumb {
+    width: 140px;
+    height: 140px;
+}
+.p-auth {
+    max-width: 540px;
+}

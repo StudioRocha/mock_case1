@@ -18,8 +18,12 @@ class Item extends Model
         'like_counts',
         'comment_counts',
         'item_descriptions',
-        'category_ids',
         'conditions',
         'is_sold',
     ];
+
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class, 'category_item');
+    }
 }

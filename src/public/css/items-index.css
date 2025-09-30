@@ -1,0 +1,22 @@
+/* / (トップ) 専用のカード名フォントサイズ拡大 */
+.c-card__name {
+    font-size: clamp(16px, 1.6vw, 18px);
+    line-height: 1.5;
+}
+.p-top {
+    max-width: 1300px;
+    margin: 0 auto;
+}
+.p-top .p-grid {
+    margin-top: clamp(50px, 2vw, 24px);
+}
+/* タブ開始位置をやや右に寄せる */
+.p-top-tabs .p-tabs {
+    padding-left: clamp(12px, 12vw, 180px);
+    gap: clamp(16px, 12vw, 62px);
+    margin-top: 0; /* 上の余白を詰める（共通のp-tabsより優先） */
+}
+.p-top-tabs .p-tabs__tab {
+    font-size: clamp(16px, 1.6vw, 20px);
+    font-weight: 600;
+}

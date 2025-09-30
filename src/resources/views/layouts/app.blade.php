@@ -11,6 +11,7 @@
             crossorigin="anonymous"
         />
         <link rel="stylesheet" href="/css/common.css" />
+        @stack('styles')
     </head>
     <body class="l-body">
         <header class="l-header">
@@ -86,7 +87,9 @@
         </header>
 
         <main class="l-main">
-            <div class="l-container">@yield('content')</div>
+            <div class="l-container">
+                @include('components.flash') @yield('content')
+            </div>
         </main>
     </body>
 </html>

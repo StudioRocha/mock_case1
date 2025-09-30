@@ -1,4 +1,6 @@
-@extends('layouts.app') @section('title', 'マイページ') @section('content')
+@extends('layouts.app') @section('title', 'マイページ') @push('styles')
+<link rel="stylesheet" href="/css/mypage.css" />
+@endpush @section('content')
 <div class="p-mypage">
     <div class="p-mypage__header">
         <div class="p-avatar__thumb">
@@ -7,7 +9,9 @@
                 style="@if(optional($user->profile)->avatar_paths) background-image:url('{{ asset('storage/'. $user->profile->avatar_paths) }}') @endif"
             ></div>
         </div>
-        <div class="p-mypage__name">{{ $user->name }}</div>
+        <div class="p-mypage__name">
+            {{ optional($user->profile)->usernames ?? $user->name }}
+        </div>
         <a href="/mypage/profile" class="c-button c-button--outline-danger"
             >プロフィールを編集</a
         >
@@ -36,7 +40,7 @@
                 @endif @if($item->item_image_paths)
                 <img
                     class="c-card__img"
-                    src="{{ asset($item->item_image_paths) }}"
+                    src="{{ asset(Str::startsWith($item->item_image_paths, 'http') ? $item->item_image_paths : 'storage/'.$item->item_image_paths) }}"
                     alt="{{ $item->item_names }}"
                 />
                 @else

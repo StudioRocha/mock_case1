@@ -1,0 +1,24 @@
+.p-mypage {
+    max-width: 1000px;
+    margin: 24px auto 64px;
+    margin-top: 0;
+}
+.p-mypage__header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: flex-start;
+    padding: 0 clamp(12px, 6vw, 80px);
+    margin-bottom: 24px;
+}
+.p-mypage__header .c-button--outline-danger {
+    margin-left: auto;
+}
+.p-mypage__name {
+    font-size: 30px;
+    font-weight: 700;
+}
+.p-mypage__tabs {
+    justify-content: flex-start;
+    margin-top: 8px;
+}

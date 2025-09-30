@@ -1,5 +1,6 @@
-@extends('layouts.app') @section('title', 'プロフィール設定')
-@section('content')
+@extends('layouts.app') @section('title', 'プロフィール設定') @push('styles')
+<link rel="stylesheet" href="/css/profile.css" />
+@endpush @section('content')
 <div class="p-auth">
     <h1 class="p-auth__title">プロフィール設定</h1>
     <form

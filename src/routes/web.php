@@ -27,6 +27,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/mypage', [MypageController::class, 'index'])->name('mypage.index');
     Route::get('/mypage/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/mypage/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::get('/sell', [\App\Http\Controllers\ItemController::class, 'create'])->name('items.create');
+    Route::post('/sell', [\App\Http\Controllers\ItemController::class, 'store'])->name('items.store');
 });
 
 // Auth routes (Fortify互換). GETは自作ビュー、POSTはFortifyコントローラへ委譲

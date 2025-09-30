@@ -13,6 +13,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // 初期シードは必要に応じてここに追加
+        $this->call([
+            CategorySeeder::class,
+        ]);
     }
 }

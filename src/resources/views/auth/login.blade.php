@@ -1,4 +1,6 @@
-@extends('layouts.app') @section('title', 'ログイン') @section('content')
+@extends('layouts.app') @section('title', 'ログイン') @push('styles')
+<link rel="stylesheet" href="/css/auth.css" />
+@endpush @section('content')
 <div class="p-auth">
     <h1 class="p-auth__title">ログイン</h1>
     <form action="{{ route('login') }}" method="post" class="p-form" novalidate>
