@@ -1,5 +1,5 @@
 .p-mypage {
-    max-width: 1000px;
+    max-width: 1200px;
     margin: 24px auto 64px;
     margin-top: 0;
 }
@@ -21,4 +21,8 @@
 .p-mypage__tabs {
     justify-content: flex-start;
     margin-top: 8px;
+}
+.p-tabs.p-mypage__tabs,
+.p-mypage__tabs .p-tabs {
+    padding-left: clamp(12px, 6vw, 60px);
 }

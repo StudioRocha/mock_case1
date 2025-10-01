@@ -5,6 +5,7 @@
 .p-sell__section-title {
     margin: 24px 0 8px;
     font-weight: 700;
+    font-size: 18px;
 }
 .p-upload {
     display: flex;

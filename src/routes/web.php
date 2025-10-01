@@ -29,7 +29,13 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/mypage/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::get('/sell', [\App\Http\Controllers\ItemController::class, 'create'])->name('items.create');
     Route::post('/sell', [\App\Http\Controllers\ItemController::class, 'store'])->name('items.store');
+    Route::post('/item/{item}', [\App\Http\Controllers\ItemController::class, 'comment'])->name('items.comment');
+    Route::post('/item/{item}/purchase', [\App\Http\Controllers\ItemController::class, 'purchase'])->name('items.purchase');
+    Route::post('/item/{item}/like', [\App\Http\Controllers\ItemController::class, 'like'])->name('items.like');
 });
+
+// 商品詳細（未ログインでも閲覧可）
+Route::get('/item/{item}', [\App\Http\Controllers\ItemController::class, 'show'])->name('items.show');
 
 // Auth routes (Fortify互換). GETは自作ビュー、POSTはFortifyコントローラへ委譲
 Route::get('/login', [LoginController::class, 'show'])->name('login');

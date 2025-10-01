@@ -1,0 +1,178 @@
+.p-detail {
+    max-width: 1200px;
+    margin: 24px auto 64px;
+}
+.p-detail__main {
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: 58px;
+    align-items: start;
+}
+.p-detail__image {
+}
+.p-detail__img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 8px;
+    background: #eee;
+}
+.p-detail__name {
+    font-size: clamp(30px, 2vw, 30px);
+    font-weight: 700;
+}
+.p-detail__brand {
+    margin-top: 4px;
+    color: #666;
+}
+.p-detail__price {
+    margin-top: 12px;
+    font-size: clamp(24px, 2vw, 22px);
+    font-weight: 700;
+}
+.p-detail__price-yen {
+    font-size: 0.6em;
+    margin-right: 2px;
+    vertical-align: baseline;
+}
+.p-detail__buy {
+    margin-top: 12px;
+}
+.p-detail__buy-btn {
+    width: 100%;
+    height: 44px;
+    background: #f12b2b;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+}
+.p-detail__buy-btn--disabled {
+    background: #ccc;
+    color: #777;
+    cursor: not-allowed;
+}
+.p-detail__meta {
+    margin-top: 8px;
+    display: flex;
+    gap: 24px;
+    color: #555;
+    align-items: flex-start; /* カウンタを下に配置してもアイコン位置は維持 */
+    margin-left: 18px; /* 全体を少し右へ寄せる */
+}
+.c-icon {
+    width: 22px;
+    height: 22px;
+    display: inline-block;
+}
+.p-detail__icon {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    line-height: 1;
+}
+.p-detail__comment-count {
+    margin: 0;
+    font-size: 14px;
+    text-align: center;
+    display: block;
+    line-height: 14px;
+    font-weight: 600;
+}
+.p-like {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+.p-like__btn {
+    background: transparent;
+    border: none;
+    font-size: 22px;
+    line-height: 22px; /* アイコン縦サイズを固定 */
+    height: 22px;
+    cursor: pointer;
+    color: #aaa;
+}
+.p-like__btn--active {
+    color: #f4c20d;
+}
+.p-like__count {
+    text-align: center;
+    font-size: 14px;
+    line-height: 14px;
+    margin-top: 0px;
+    display: block;
+    font-weight: 600;
+}
+.c-icon-text {
+    font-size: 24px;
+    line-height: 24px;
+    height: 22px;
+    display: inline-block;
+}
+.p-detail__desc {
+    margin-top: 12px;
+    line-height: 1.8;
+}
+.p-detail__tags {
+    margin-top: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.c-tag {
+    display: inline-flex;
+    align-items: center;
+    cursor: default;
+}
+.c-tag span {
+    display: inline-block;
+    padding: 6px 12px;
+    border: 1px solid #f12b2b;
+    border-radius: 9999px;
+    background: #fff;
+    color: #f12b2b;
+    line-height: 1;
+}
+.c-tag span:hover {
+    border-color: #e60033;
+}
+.p-detail__spec {
+    margin-top: 8px;
+    font-weight: 500;
+    color: #333;
+}
+.p-detail__comments {
+    margin-top: 24px;
+}
+.p-detail__comments .p-detail__section {
+    color: #888;
+}
+.p-detail__section {
+    font-weight: 700;
+    margin-bottom: 12px;
+    font-size: 20px;
+    margin-top: 20px;
+}
+.p-comment {
+    padding: 12px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    margin-bottom: 12px;
+}
+.p-comment__user {
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+/* コメント送信ボタンの開始位置を少し上へ（共通の余白を上書き） */
+.p-detail .p-form__submit {
+    margin-top:22px;
+}
+
+@media (max-width: 900px) {
+    .p-detail__main {
+        grid-template-columns: 1fr;
+    }
+}

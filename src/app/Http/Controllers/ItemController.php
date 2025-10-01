@@ -7,6 +7,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Category;
 use App\Http\Requests\ExhibitionRequest;
+use App\Http\Requests\CommentRequest;
+use App\Models\Comment;
+use App\Models\ItemLike;
+use Illuminate\Support\Facades\DB;
 
 
 class ItemController extends Controller
@@ -20,13 +24,30 @@ class ItemController extends Controller
             $query->where('item_names', 'like', "%{$keyword}%");
         }
 
-        if (Auth::check()) {
-            $query->where('user_id', '!=', Auth::id());
+        $activeTab = $request->query('tab', 'recommend');
+
+        // タブ=マイリストの場合は、ログインユーザーが「いいね」した商品のみ表示
+        if ($activeTab === 'mylist') {
+            if (Auth::check()) {
+                $userId = Auth::id();
+                $query->whereExists(function ($sub) use ($userId) {
+                    $sub->selectRaw('1')
+                        ->from('item_likes')
+                        ->whereColumn('item_likes.item_id', 'items.id')
+                        ->where('item_likes.user_id', $userId);
+                });
+            } else {
+                // 未ログイン時は空にする
+                $query->whereRaw('1=0');
+            }
+        } else {
+            // おすすめタブなど通常一覧では自分の出品を除外
+            if (Auth::check()) {
+                $query->where('user_id', '!=', Auth::id());
+            }
         }
 
         $items = $query->latest()->paginate(24)->appends($request->query());
-
-        $activeTab = $request->query('tab', 'recommend');
 
         return view('items.index', [
             'items' => $items,
@@ -42,6 +63,54 @@ class ItemController extends Controller
         return view('items.sell', compact('categories','conditions'));
     }
 
+    public function show(Item $item)
+    {
+        $item->load(['categories','comments' => function($q){ $q->latest(); }, 'comments.user']);
+        $liked = $item->isLikedBy(optional(auth()->user())->id);
+        $likeCount = $item->like_counts;
+        return view('items.show', compact('item','liked','likeCount'));
+    }
+
+    public function comment(Item $item, CommentRequest $request)
+    {
+        $data = $request->validated();
+        $comment = new Comment();
+        $comment->item_id = $item->id;
+        $comment->user_id = auth()->id();
+        $comment->comment_body = $data['comment_body'];
+        $comment->save();
+        return back()->with('success', 'コメントを投稿しました');
+    }
+
+    public function purchase(Item $item)
+    {
+        // TODO: 購入フロー実装（暫定）
+        return redirect()->route('items.show', $item)->with('success', '購入手続きは準備中です。');
+    }
+
+    public function like(Item $item)
+    {
+        if (!auth()->check()) {
+            return redirect()->route('login');
+        }
+        $userId = auth()->id();
+        DB::transaction(function() use ($item, $userId) {
+            $like = ItemLike::where('item_id', $item->id)
+                ->where('user_id', $userId)
+                ->lockForUpdate()
+                ->first();
+            if ($like) {
+                $like->delete();
+                if ((int)$item->like_counts > 0) {
+                    $item->decrement('like_counts');
+                }
+            } else {
+                ItemLike::create(['item_id' => $item->id, 'user_id' => $userId]);
+                $item->increment('like_counts');
+            }
+        });
+        return back();
+    }
     public function store(ExhibitionRequest $request)
     {
         $user = Auth::user();

@@ -20,12 +20,16 @@
     <div class="p-tabs p-mypage__tabs">
         <a
             href="{{ url('/mypage?page=sell') }}"
-            class="p-tabs__tab {{ $activeTab === 'sell' ? 'is-active' : '' }}"
+            class="p-tabs__tab {{
+                $activeTab === 'sell' ? 'p-tabs__tab--active' : ''
+            }}"
             >出品した商品</a
         >
         <a
             href="{{ url('/mypage?page=buy') }}"
-            class="p-tabs__tab {{ $activeTab === 'buy' ? 'is-active' : '' }}"
+            class="p-tabs__tab {{
+                $activeTab === 'buy' ? 'p-tabs__tab--active' : ''
+            }}"
             >購入した商品</a
         >
     </div>
