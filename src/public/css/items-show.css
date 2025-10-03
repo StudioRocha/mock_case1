@@ -116,32 +116,44 @@
     line-height: 1.8;
 }
 .p-detail__tags {
-    margin-top: 12px;
+    margin-top: 32px;
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 1px;
 }
-.c-tag {
+.p-detail__tags > div:first-child {
+    font-weight: 800;
+}
+/* 商品詳細ページのカテゴリータグ（グレー） */
+.p-detail .c-tag {
     display: inline-flex;
     align-items: center;
     cursor: default;
+    margin-left: 10px;
 }
-.c-tag span {
+.p-detail .c-tag:first-of-type {
+    margin-left: 40px;
+}
+.p-detail .c-tag span {
+    margin-left: 8px;
     display: inline-block;
-    padding: 6px 12px;
-    border: 1px solid #f12b2b;
+    padding: 4px 12px;
+    border: none;
     border-radius: 9999px;
-    background: #fff;
-    color: #f12b2b;
+    background: #d9d9d9;
+    color: #333;
     line-height: 1;
-}
-.c-tag span:hover {
-    border-color: #e60033;
+    font-size: 16px;
+    font-weight: 500;
 }
 .p-detail__spec {
-    margin-top: 8px;
-    font-weight: 500;
+    margin-top: 20px;
+    font-weight: 800;
     color: #333;
+}
+.p-detail__spec-value {
+    margin-left: 60px;
+    font-weight: 500;
 }
 .p-detail__comments {
     margin-top: 24px;
@@ -153,22 +165,49 @@
     font-weight: 700;
     margin-bottom: 12px;
     font-size: 20px;
-    margin-top: 20px;
+    margin-top: 40px;
 }
 .p-comment {
-    padding: 12px;
-    border: 1px solid #eee;
-    border-radius: 8px;
-    margin-bottom: 12px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 16px;
+    margin-top: 20px;
+}
+.p-comment__avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #ddd;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+.p-comment__avatar-bg {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-color: #ddd;
+}
+.p-comment__content {
+    flex: 1;
 }
 .p-comment__user {
     font-weight: 700;
-    margin-bottom: 6px;
+    font-size: 16px;
+    margin-bottom: 4px;
+}
+.p-comment__body {
+    background: #f5f5f5;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 16px;
+    line-height: 1.5;
 }
 
 /* コメント送信ボタンの開始位置を少し上へ（共通の余白を上書き） */
 .p-detail .p-form__submit {
-    margin-top:22px;
+    margin-top: 22px;
 }
 
 @media (max-width: 900px) {

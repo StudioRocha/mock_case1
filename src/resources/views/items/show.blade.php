@@ -71,6 +71,7 @@
             <div class="p-detail__desc">{{ $item->item_descriptions }}</div>
             <h2 class="p-detail__section">商品の情報</h2>
             <div class="p-detail__tags">
+                <div>カテゴリー</div>
                 @foreach($item->categories as $cat)
                 <span class="c-tag"
                     ><span>{{ $cat->category_names }}</span></span
@@ -79,8 +80,11 @@
             </div>
             <div class="p-detail__spec">
                 <div>
-                    商品の状態:
-                    {{ ['','良好','目立った傷や汚れ無し','やや傷や汚れあり','状態が悪い'][$item->conditions] ?? '' }}
+                    商品の状態
+                    <span
+                        class="p-detail__spec-value"
+                        >{{ ['','良好','目立った傷や汚れ無し','やや傷や汚れあり','状態が悪い'][$item->conditions] ?? '' }}</span
+                    >
                 </div>
             </div>
 
@@ -91,11 +95,19 @@
                 <div class="p-detail__comment-list">
                     @foreach($item->comments as $comment)
                     <div class="p-comment">
-                        <div class="p-comment__user">
-                            {{ $comment->user->name ?? 'ユーザー' }}
+                        <div class="p-comment__avatar">
+                            <div
+                                class="p-comment__avatar-bg"
+                                style="@if(optional($comment->user->profile)->avatar_paths) background-image: url('{{ asset('storage/'. $comment->user->profile->avatar_paths) }}') @endif"
+                            ></div>
                         </div>
-                        <div class="p-comment__body">
-                            {{ $comment->comment_body }}
+                        <div class="p-comment__content">
+                            <div class="p-comment__user">
+                                {{ optional($comment->user->profile)->usernames ?? $comment->user->name ?? 'ユーザー' }}
+                            </div>
+                            <div class="p-comment__body">
+                                {{ $comment->comment_body }}
+                            </div>
                         </div>
                     </div>
                     @endforeach

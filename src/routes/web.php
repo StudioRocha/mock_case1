@@ -29,7 +29,7 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/mypage/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::get('/sell', [\App\Http\Controllers\ItemController::class, 'create'])->name('items.create');
     Route::post('/sell', [\App\Http\Controllers\ItemController::class, 'store'])->name('items.store');
-    Route::post('/item/{item}', [\App\Http\Controllers\ItemController::class, 'comment'])->name('items.comment');
+    Route::post('/item/{item}/comment', [\App\Http\Controllers\ItemController::class, 'comment'])->name('items.comment');
     Route::post('/item/{item}/purchase', [\App\Http\Controllers\ItemController::class, 'purchase'])->name('items.purchase');
     Route::post('/item/{item}/like', [\App\Http\Controllers\ItemController::class, 'like'])->name('items.like');
 });
