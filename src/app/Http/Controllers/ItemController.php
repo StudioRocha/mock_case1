@@ -87,6 +87,17 @@ class ItemController extends Controller
     public function purchaseForm(Item $item)
     {
         $user = Auth::user();
+        
+        // 商品が既に売却済みでないかチェック
+        if ($item->is_sold) {
+            return redirect()->route('items.index')->with('error', 'この商品は既に売却済みです。');
+        }
+        
+        // 自分が出品した商品は購入不可
+        if ($item->user_id === $user->id) {
+            return redirect()->route('items.show', $item)->with('error', '自分が出品した商品は購入できません。');
+        }
+        
         $profile = $user->profile;
         
         // 初期住所を設定（プロフィールから取得）

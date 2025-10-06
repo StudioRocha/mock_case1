@@ -12,6 +12,12 @@ class StripeService
     public function __construct()
     {
         Stripe::setApiKey(config('stripe.secret_key'));
+        
+        // 環境に応じてStripeの設定を調整
+        if (config('app.env') === 'production') {
+            // 本番環境の設定
+            Stripe::setApiVersion('2020-08-27');
+        }
     }
 
     /**
@@ -43,12 +49,9 @@ class StripeService
                 ],
             ];
 
-            // コンビニ決済の場合は顧客情報と支払期限を追加
+            // コンビニ決済の場合は顧客情報を追加
             if ($paymentMethod === 'convenience_store') {
                 $sessionData['customer_email'] = $user->email;
-                // 支払期限を設定（デフォルト24時間、環境変数で変更可能）
-                $expiryHours = config('stripe.konbini_expiry_hours', 24);
-                $sessionData['expires_at'] = time() + ($expiryHours * 60 * 60);
             }
 
             $session = Session::create($sessionData);

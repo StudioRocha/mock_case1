@@ -67,5 +67,5 @@
     <div class="p-auth__link">
         <a href="{{ route('login') }}">ログインはこちら</a>
     </div>
-    @endsection
 </div>
+@endsection

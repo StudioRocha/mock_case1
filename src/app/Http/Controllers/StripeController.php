@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\PurchaseRequest;
 use App\Services\StripeService;
 use App\Models\Item;
 use App\Models\Order;
@@ -22,7 +23,7 @@ class StripeController extends Controller
     /**
      * 決済セッションを作成してStripe決済画面にリダイレクト
      */
-    public function createCheckoutSession(Request $request, Item $item)
+    public function createCheckoutSession(PurchaseRequest $request, Item $item)
     {
         $user = Auth::user();
         
@@ -76,6 +77,35 @@ class StripeController extends Controller
             // デバッグ: セッション情報をログに出力
             Log::info('Session payment_status: ' . $session->payment_status);
             Log::info('Session metadata: ' . json_encode($session->metadata));
+            
+            // PaymentIntentの情報を取得
+            if ($session->payment_intent) {
+                $paymentIntent = \Stripe\PaymentIntent::retrieve($session->payment_intent);
+                Log::info('PaymentIntent status: ' . $paymentIntent->status);
+                Log::info('PaymentIntent next_action: ' . json_encode($paymentIntent->next_action));
+                
+                // コンビニ決済の場合のnext_action処理
+                if ($paymentIntent->next_action && $paymentIntent->next_action->type === 'konbini_display_details') {
+                    // コンビニ決済の場合は、支払い待ち状態として処理
+                    DB::transaction(function() use ($item, $session, $paymentIntent) {
+                        Order::create([
+                            'user_id' => $session->metadata->user_id,
+                            'item_id' => $item->id,
+                            'price' => $item->item_prices,
+                            'qty' => 1,
+                            'total_amount' => $item->item_prices,
+                            'payment_method' => $session->payment_method_types[0],
+                            'shipping_address' => $session->metadata->shipping_address,
+                            'status' => 'pending', // 支払い待ち状態
+                        ]);
+                        
+                        // 商品を売却済みにマーク（在庫予約）
+                        $item->update(['is_sold' => true]);
+                    });
+                    
+                    return redirect()->route('items.show', $item)->with('info', 'コンビニでの支払い手続きが完了しました。支払い期限までにコンビニでお支払いください。');
+                }
+            }
             
             if ($session->payment_status === 'paid') {
                 // 決済が完了している場合、注文を作成
