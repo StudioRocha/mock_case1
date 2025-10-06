@@ -130,14 +130,14 @@
             const reader = new FileReader();
             reader.onload = function(ev){
                 preview.style.backgroundImage = 'url(' + ev.target.result + ')';
-                preview.classList.add('is-image');
-                drop.classList.add('is-image');
+                preview.classList.add('p-upload__thumb--image');
+                drop.classList.add('p-upload__drop--image');
                 preview.textContent = '';
             };
             reader.readAsDataURL(file);
         });
-        drop.addEventListener('dragover', function(e){ e.preventDefault(); drop.classList.add('is-hover'); });
-        drop.addEventListener('dragleave', function(){ drop.classList.remove('is-hover'); });
+        drop.addEventListener('dragover', function(e){ e.preventDefault(); drop.classList.add('p-upload__drop--hover'); });
+        drop.addEventListener('dragleave', function(){ drop.classList.remove('p-upload__drop--hover'); });
         drop.addEventListener('drop', function(e){
             e.preventDefault();
             const file = e.dataTransfer.files && e.dataTransfer.files[0];

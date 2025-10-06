@@ -8,8 +8,10 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Category;
 use App\Http\Requests\ExhibitionRequest;
 use App\Http\Requests\CommentRequest;
+use App\Http\Requests\PurchaseRequest;
 use App\Models\Comment;
 use App\Models\ItemLike;
+use App\Models\Order;
 use Illuminate\Support\Facades\DB;
 
 
@@ -82,10 +84,53 @@ class ItemController extends Controller
         return back()->with('success', 'コメントを投稿しました');
     }
 
-    public function purchase(Item $item)
+    public function purchaseForm(Item $item)
     {
-        // TODO: 購入フロー実装（暫定）
-        return redirect()->route('items.show', $item)->with('success', '購入手続きは準備中です。');
+        $user = Auth::user();
+        $profile = $user->profile;
+        
+        // 初期住所を設定（プロフィールから取得）
+        $defaultAddress = '';
+        if ($profile) {
+            $defaultAddress = "〒{$profile->postal_codes}\n{$profile->addresses}";
+            if ($profile->building_names) {
+                $defaultAddress .= "\n{$profile->building_names}";
+            }
+        }
+        
+        return view('items.purchase', compact('item', 'defaultAddress'));
+    }
+
+    public function purchase(Item $item, PurchaseRequest $request)
+    {
+        $user = Auth::user();
+        
+        // 商品が既に売却済みでないかチェック
+        if ($item->is_sold) {
+            return redirect()->route('items.show', $item)->with('error', 'この商品は既に売却済みです。');
+        }
+        
+        // 自分が出品した商品は購入不可
+        if ($item->user_id === $user->id) {
+            return redirect()->route('items.show', $item)->with('error', '自分が出品した商品は購入できません。');
+        }
+        
+        DB::transaction(function() use ($item, $user, $request) {
+            // 注文を作成
+            Order::create([
+                'user_id' => $user->id,
+                'item_id' => $item->id,
+                'total_amount' => $item->item_prices,
+                'payment_method' => $request->payment_method,
+                'shipping_address' => $request->shipping_address,
+                'status' => 'paid',
+            ]);
+            
+            // 商品を売却済みにマーク
+            $item->update(['is_sold' => true]);
+        });
+        
+        return redirect()->route('items.index')->with('success', '購入が完了しました。');
     }
 
     public function like(Item $item)

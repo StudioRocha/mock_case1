@@ -9,6 +9,9 @@
                 src="{{ asset(Str::startsWith($item->item_image_paths,'http') ? $item->item_image_paths : 'storage/'.$item->item_image_paths) }}"
                 alt="{{ $item->item_names }}"
             />
+            @if($item->is_sold)
+            <span class="p-detail__badge">Sold</span>
+            @endif
         </div>
         <div class="p-detail__info">
             <h1 class="p-detail__name">{{ $item->item_names }}</h1>
@@ -49,24 +52,47 @@
                 </span>
             </div>
             @php($isOwner = auth()->check() && auth()->id() === $item->user_id)
-            <form
-                action="{{ url('/item/'.$item->id.'/purchase') }}"
-                method="post"
-                class="p-detail__buy"
-            >
-                @csrf
+            @if($isOwner)
+            <div class="p-detail__buy">
                 <button
-                    class="c-button c-button--primary p-detail__buy-btn {{
-                        $isOwner ? 'p-detail__buy-btn--disabled' : ''
-                    }}"
-                    type="submit"
-                    @if($isOwner)
+                    class="c-button c-button--primary p-detail__buy-btn p-detail__buy-btn--disabled"
                     disabled
-                    @endif
                 >
                     購入手続きへ
                 </button>
-            </form>
+                <p class="p-detail__owner-notice">
+                    あなたが出品している商品です
+                </p>
+            </div>
+            @elseif($item->is_sold)
+            <div class="p-detail__buy">
+                @php($hasOrder = $item->orders()->where('status',
+                'paid')->exists()) @if($hasOrder)
+                <button
+                    class="c-button c-button--primary p-detail__buy-btn p-detail__buy-btn--disabled"
+                    disabled
+                >
+                    売却済み
+                </button>
+                @else
+                <button
+                    class="c-button c-button--primary p-detail__buy-btn p-detail__buy-btn--disabled"
+                    disabled
+                >
+                    決済中
+                </button>
+                @endif
+            </div>
+            @else
+            <div class="p-detail__buy">
+                <a
+                    href="{{ route('items.purchase.form', $item) }}"
+                    class="c-button c-button--primary p-detail__buy-btn"
+                >
+                    購入手続きへ
+                </a>
+            </div>
+            @endif
             <h2 class="p-detail__section">商品説明</h2>
             <div class="p-detail__desc">{{ $item->item_descriptions }}</div>
             <h2 class="p-detail__section">商品の情報</h2>
@@ -95,19 +121,24 @@
                 <div class="p-detail__comment-list">
                     @foreach($item->comments as $comment)
                     <div class="p-comment">
-                        <div class="p-comment__avatar">
-                            <div
-                                class="p-comment__avatar-bg"
-                                style="@if(optional($comment->user->profile)->avatar_paths) background-image: url('{{ asset('storage/'. $comment->user->profile->avatar_paths) }}') @endif"
-                            ></div>
+                        <div class="p-comment__header">
+                            <div class="p-comment__avatar">
+                                <div
+                                    class="p-comment__avatar-bg"
+                                    style="@if(optional($comment->user->profile)->avatar_paths) background-image: url('{{ asset('storage/'. $comment->user->profile->avatar_paths) }}') @endif"
+                                ></div>
+                            </div>
+                            <div class="p-comment__user-info">
+                                <div class="p-comment__user">
+                                    {{ optional($comment->user->profile)->usernames ?? $comment->user->name ?? 'ユーザー' }}
+                                </div>
+                                <div class="p-comment__date">
+                                    {{ $comment->created_at->format('Y/m/d H:i') }}
+                                </div>
+                            </div>
                         </div>
-                        <div class="p-comment__content">
-                            <div class="p-comment__user">
-                                {{ optional($comment->user->profile)->usernames ?? $comment->user->name ?? 'ユーザー' }}
-                            </div>
-                            <div class="p-comment__body">
-                                {{ $comment->comment_body }}
-                            </div>
+                        <div class="p-comment__body">
+                            {{ $comment->comment_body }}
                         </div>
                     </div>
                     @endforeach

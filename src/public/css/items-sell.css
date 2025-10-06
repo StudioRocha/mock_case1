@@ -28,6 +28,10 @@
 .p-upload__drop--image {
     border: none;
 }
+.p-upload__drop--hover {
+    border-color: #f12b2b;
+    background-color: #f9f9f9;
+}
 .p-upload__thumb {
     padding: 14px 20px;
     border: 2px solid #f12b2b;
