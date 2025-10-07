@@ -5,6 +5,7 @@ use App\Http\Controllers\ItemController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MypageController;
 use App\Http\Controllers\StripeController;
+use App\Http\Controllers\AddressChangeController;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 use Laravel\Fortify\Http\Controllers\RegisteredUserController;
 use App\Http\Controllers\Auth\LoginController;
@@ -32,6 +33,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/sell', [\App\Http\Controllers\ItemController::class, 'store'])->name('items.store');
     Route::get('/purchase/{item}', [\App\Http\Controllers\ItemController::class, 'purchaseForm'])->name('items.purchase.form');
     Route::post('/item/{item}/purchase', [\App\Http\Controllers\ItemController::class, 'purchase'])->name('items.purchase');
+    Route::get('/purchase/address/{item}', [AddressChangeController::class, 'show'])->name('address.change');
+    Route::post('/purchase/address/{item}', [AddressChangeController::class, 'update'])->name('address.update');
     Route::post('/item/{item}/stripe/checkout', [StripeController::class, 'createCheckoutSession'])->name('stripe.checkout');
     Route::get('/stripe/success/{item}', [StripeController::class, 'success'])->name('stripe.success');
     Route::get('/stripe/cancel/{item}', [StripeController::class, 'cancel'])->name('stripe.cancel');

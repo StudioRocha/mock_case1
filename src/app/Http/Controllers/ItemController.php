@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Item;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 use App\Models\Category;
 use App\Http\Requests\ExhibitionRequest;
 use App\Http\Requests\CommentRequest;
@@ -109,7 +110,10 @@ class ItemController extends Controller
             }
         }
         
-        return view('items.purchase', compact('item', 'defaultAddress'));
+        // セッションから変更された住所を取得（あれば）
+        $currentAddress = Session::get("shipping_address_{$item->id}", $defaultAddress);
+        
+        return view('items.purchase', compact('item', 'defaultAddress', 'currentAddress'));
     }
 
     public function purchase(Item $item, PurchaseRequest $request)

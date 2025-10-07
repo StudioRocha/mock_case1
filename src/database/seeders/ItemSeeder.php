@@ -129,7 +129,7 @@ class ItemSeeder extends Seeder
                     'item_names' => $itemData['item_names'],
                     'brand_names' => $itemData['brand_names'] ?? null,
                     'item_prices' => $itemData['item_prices'],
-                    'like_counts' => rand(0, 50),
+                    'like_counts' => 0,
                     'comment_counts' => rand(0, 10),
                     'item_descriptions' => $itemData['item_descriptions'],
                     'conditions' => $itemData['conditions'],

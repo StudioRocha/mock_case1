@@ -45,10 +45,14 @@
             <div class="p-purchase__section">
                 <div class="p-purchase__section-header">
                     <h2 class="p-purchase__section-title">配送先</h2>
-                    <a href="#" class="p-purchase__change-link">変更する</a>
+                    <a
+                        href="{{ route('address.change', $item) }}"
+                        class="p-purchase__change-link"
+                        >変更する</a
+                    >
                 </div>
                 <div class="p-purchase__address">
-                    {!! nl2br(e($defaultAddress)) !!}
+                    {!! nl2br(e($currentAddress)) !!}
                 </div>
             </div>
 
@@ -84,7 +88,7 @@
                 <input
                     type="hidden"
                     name="shipping_address"
-                    value="{{ $defaultAddress }}"
+                    value="{{ $currentAddress }}"
                 />
                 <button type="submit" class="p-purchase__buy-btn">
                     購入する
