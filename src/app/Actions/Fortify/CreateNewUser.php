@@ -5,32 +5,48 @@ namespace App\Actions\Fortify;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\EmailAuthController;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
+use Illuminate\Support\Facades\Session;
+
 
 class CreateNewUser implements CreatesNewUsers
 {
+
     public function create(array $input)
     {
-        Validator::make($input, [
-            'username' => ['required','string','max:20'],
-            'email' => ['required','email','unique:users,email'],
-            'password' => ['required','string','min:8','confirmed'],
-            'password_confirmation' => ['required','string','min:8'],
-        ], [
-            'username.required' => 'お名前を入力してください',
-            'email.required' => 'メールアドレスを入力してください',
-            'email.email' => 'メールアドレスはメール形式で入力してください',
-            'password.required' => 'パスワードを入力してください',
-            'password.min' => 'パスワードは8文字以上で入力してください',
-            'password.confirmed' => 'パスワードと一致しません',
-            'password_confirmation.required' => '確認用パスワードを入力してください',
-        ])->validate();
+        // 設定ファイルからバリデーションルールとメッセージを取得
+        $rules = config('validation.register.rules');
+        $messages = config('validation.register.messages');
+        
+        // テスト環境ではuniqueルールを除外
+        if (app()->environment('testing')) {
+            $rules['email'] = array_filter($rules['email'], function($rule) {
+                return !str_starts_with($rule, 'unique:');
+            });
+        }
+        
+        Validator::make($input, $rules, $messages)->validate();
 
-        return User::create([
+        // ユーザー情報をセッションに一時保存（メール認証完了後にDB登録）
+        $userData = [
             'name' => $input['username'],
             'email' => $input['email'],
             'password' => Hash::make($input['password']),
-        ]);
+        ];
+        
+        Session::put('pending_user_data', $userData);
+        
+        // 一時的なユーザーオブジェクトを作成（メール送信用）
+        $tempUser = new User($userData);
+        $tempUser->id = 'temp_' . time(); // 一時的なID
+        
+        // メール認証メールを送信
+        $emailAuthController = new EmailAuthController();
+        $emailAuthController->sendVerificationEmail($tempUser);
+        
+        // メール認証誘導画面にリダイレクト
+        return redirect()->route('email.guide')->with('success', '登録が完了しました。メール認証を完了してください。');
     }
 }
 

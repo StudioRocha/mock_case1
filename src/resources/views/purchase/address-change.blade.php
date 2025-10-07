@@ -19,7 +19,14 @@
                 <input type="text" id="postal_code" name="postal_code"
                 class="p-address-change__input @error('postal_code')
                 p-address-change__input--error @enderror" value="{{
-                    old("postal_code", explode("\n", $currentAddress)[0] ?? "")
+                    old(
+                        "postal_code",
+                        str_replace(
+                            "〒",
+                            "",
+                            explode("\n", $currentAddress)[0] ?? ""
+                        )
+                    )
                 }}" placeholder="123-4567" maxlength="8" > @error('postal_code')
                 <div class="p-address-change__error">{{ $message }}</div>
                 @enderror

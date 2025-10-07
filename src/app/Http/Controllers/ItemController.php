@@ -52,7 +52,7 @@ class ItemController extends Controller
 
         $items = $query->latest()->paginate(24)->appends($request->query());
 
-        return view('items.index', [
+        return view('index', [
             'items' => $items,
             'activeTab' => $activeTab,
             'keyword' => $request->input('q', ''),
@@ -63,7 +63,7 @@ class ItemController extends Controller
     {
         $categories = Category::orderBy('category_names')->get();
         $conditions = [1 => '良好', 2 => '目立った傷や汚れ無し', 3 => 'やや傷や汚れあり', 4 => '状態が悪い'];
-        return view('items.sell', compact('categories','conditions'));
+        return view('sell', compact('categories','conditions'));
     }
 
     public function show(Item $item)
@@ -113,7 +113,7 @@ class ItemController extends Controller
         // セッションから変更された住所を取得（あれば）
         $currentAddress = Session::get("shipping_address_{$item->id}", $defaultAddress);
         
-        return view('items.purchase', compact('item', 'defaultAddress', 'currentAddress'));
+        return view('purchase.purchase', compact('item', 'defaultAddress', 'currentAddress'));
     }
 
     public function purchase(Item $item, PurchaseRequest $request)

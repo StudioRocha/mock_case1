@@ -41,7 +41,7 @@ class AddressChangeController extends Controller
         // セッションから変更された住所を取得（あれば）
         $currentAddress = Session::get("shipping_address_{$item->id}", $defaultAddress);
         
-        return view('address-change', compact('item', 'currentAddress'));
+        return view('purchase.address-change', compact('item', 'currentAddress'));
     }
     
     /**

@@ -14,6 +14,18 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
         $profile = $user->profile;
+        
+        // プロフィールが存在しない場合は、ユーザー名を初期値として設定
+        if (!$profile) {
+            $profile = new Profile();
+            $profile->usernames = $user->name;
+        } else {
+            // プロフィールが存在する場合も、ユーザー名が空の場合は初期値を設定
+            if (empty($profile->usernames)) {
+                $profile->usernames = $user->name;
+            }
+        }
+        
         return view('mypage.profile', compact('user', 'profile'));
     }
 

@@ -23,13 +23,19 @@ class ProfileRequest extends FormRequest
      */
     public function rules()
     {
-        return [
+        $rules = [
             'avatar' => 'nullable|mimes:jpeg,png',
-            'username' => 'required|string|max:20',
             'postal_code' => ['required','regex:/^\d{3}-\d{4}$/'],
             'address' => 'required|string',
             'building_name' => 'nullable|string',
         ];
+        
+        // 住所変更画面ではユーザー名のバリデーションを無視
+        if (!$this->is('purchase/address/*')) {
+            $rules['username'] = 'required|string|max:20';
+        }
+        
+        return $rules;
     }
 
     public function attributes()
