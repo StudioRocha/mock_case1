@@ -74,8 +74,6 @@ php artisan migrate
 
 7. シーディングの実行
 
-### 実行コマンド
-
 ```bash
  php artisan db:seed
 ```
