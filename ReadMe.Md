@@ -52,9 +52,11 @@ AUTO_VERIFY_ENABLED=true
 # ===========================================
 # Stripe設定
 # ===========================================
-# 開発用のStripe APIキー
+# 開発用のStripe APIキー/開発環境ではwebhookは未使用のため値はそのまま
 STRIPE_PUBLIC_KEY=pk_test_your_publishable_key_here
 STRIPE_SECRET_KEY=sk_test_your_secret_key_here
+STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret_here
+STRIPE_ENVIRONMENT=test
 
 ```
 
