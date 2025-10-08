@@ -24,7 +24,7 @@
 ```
 
 3. .env.example から .env を作成し、環境変数を設定
-4. .env に以下の環境変数を追加
+4. .env に以下の環境変数を設定、又は追加
 
 ```text
 DB_CONNECTION=mysql

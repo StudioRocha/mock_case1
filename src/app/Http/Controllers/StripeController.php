@@ -91,8 +91,6 @@ class StripeController extends Controller
                         Order::create([
                             'user_id' => $session->metadata->user_id,
                             'item_id' => $item->id,
-                            'price' => $item->item_prices,
-                            'qty' => 1,
                             'total_amount' => $item->item_prices,
                             'payment_method' => $session->payment_method_types[0],
                             'shipping_address' => $session->metadata->shipping_address,
@@ -113,8 +111,6 @@ class StripeController extends Controller
                     Order::create([
                         'user_id' => $session->metadata->user_id,
                         'item_id' => $item->id,
-                        'price' => $item->item_prices,
-                        'qty' => 1,
                         'total_amount' => $item->item_prices,
                         'payment_method' => $session->payment_method_types[0],
                         'shipping_address' => $session->metadata->shipping_address,
