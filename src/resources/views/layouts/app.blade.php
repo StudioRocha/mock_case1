@@ -13,7 +13,9 @@
         <link rel="stylesheet" href="/css/common.css" />
         @stack('styles')
     </head>
-    <body class="l-body">
+    <body
+        class="l-body @if(request()->routeIs('email.guide')) email-auth-page @endif"
+    >
         <header class="l-header">
             <div class="l-header__inner">
                 <div class="p-header">

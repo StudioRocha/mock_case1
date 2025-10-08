@@ -9,10 +9,8 @@ use App\Http\Controllers\AddressChangeController;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 use Laravel\Fortify\Http\Controllers\RegisteredUserController;
 use App\Http\Controllers\LoginController;
-use App\Http\Controllers\CustomLoginController;
 use App\Http\Controllers\EmailAuthController;
 use App\Http\Controllers\RegisterController;
-use App\Http\Controllers\CustomRegisterController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,11 +28,11 @@ Route::get('/', [ItemController::class, 'index'])->name('items.index');
 
 // メール認証関連ルート（認証前でもアクセス可能）
 Route::get('/email/guide', [EmailAuthController::class, 'guide'])->name('email.guide');
-Route::get('/email/verify', [EmailAuthController::class, 'show'])->name('email.verify');
-Route::post('/email/verify', [EmailAuthController::class, 'verify'])->name('email.verify');
+Route::get('/email/verify/{token}', [EmailAuthController::class, 'verifyToken'])->name('email.verify.token');
 Route::get('/email/resend', [EmailAuthController::class, 'resend'])->name('email.resend');
+Route::get('/email/auto-verify', [EmailAuthController::class, 'autoVerify'])->name('email.auto-verify');
 
-Route::middleware(['auth', 'email.verified'])->group(function () {
+Route::middleware(['auth', 'block.unverified'])->group(function () {
     Route::get('/mypage', [MypageController::class, 'index'])->name('mypage.index');
     Route::get('/mypage/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/mypage/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -55,10 +53,10 @@ Route::middleware(['auth', 'email.verified'])->group(function () {
 // 商品詳細（未ログインでも閲覧可）
 Route::get('/item/{item}', [\App\Http\Controllers\ItemController::class, 'show'])->name('items.show');
 
-// Auth routes (Fortify互換). GETは自作ビュー、POSTはカスタムコントローラへ委譲
-Route::get('/login', [LoginController::class, 'show'])->name('login');
-Route::post('/login', [CustomLoginController::class, 'login']);
+// Auth routes (Fortify互換). GETは自作ビュー、POSTは統合されたコントローラへ委譲
+Route::get('/login', [LoginController::class, 'show'])->name('login')->middleware(['guest', 'block.unverified']);
+Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
-Route::get('/register', [RegisterController::class, 'show'])->name('register');
-Route::post('/register', [CustomRegisterController::class, 'store']);
+Route::get('/register', [RegisterController::class, 'show'])->name('register')->middleware('guest');
+Route::post('/register', [RegisterController::class, 'store']);

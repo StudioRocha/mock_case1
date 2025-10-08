@@ -43,6 +43,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Auto Verify Email (Development Only)
+    |--------------------------------------------------------------------------
+    |
+    | This value determines if auto verification is enabled for development.
+    | Set to false in production environment.
+    |
+    */
+
+    'auto_verify_enabled' => env('AUTO_VERIFY_ENABLED', false),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application URL
     |--------------------------------------------------------------------------
     |

@@ -28,25 +28,30 @@ class CreateNewUser implements CreatesNewUsers
         
         Validator::make($input, $rules, $messages)->validate();
 
-        // ユーザー情報をセッションに一時保存（メール認証完了後にDB登録）
-        $userData = [
-            'name' => $input['username'],
-            'email' => $input['email'],
-            'password' => Hash::make($input['password']),
-        ];
+                // ワンクリック認証用のトークンを生成
+                $verificationToken = \Illuminate\Support\Str::random(60);
+                
+                // ユーザーをデータベースに登録（メール認証前）
+                $user = User::create([
+                    'name' => $input['username'],
+                    'email' => $input['email'],
+                    'password' => Hash::make($input['password']),
+                    'email_verified_at' => null, // メール認証前はnull
+                    'verification_token' => $verificationToken,
+                    'verification_token_expires_at' => now()->addHours(24), // 24時間で期限切れ
+                ]);
         
-        Session::put('pending_user_data', $userData);
-        
-        // 一時的なユーザーオブジェクトを作成（メール送信用）
-        $tempUser = new User($userData);
-        $tempUser->id = 'temp_' . time(); // 一時的なID
+        // 開発環境用：ユーザーIDをセッションに保存（自動認証用）
+        if (config('app.auto_verify_enabled', false)) {
+            Session::put('user_id', $user->id);
+        }
         
         // メール認証メールを送信
         $emailAuthController = new EmailAuthController();
-        $emailAuthController->sendVerificationEmail($tempUser);
+        $emailAuthController->sendVerificationEmail($user);
         
         // メール認証誘導画面にリダイレクト
-        return redirect()->route('email.guide')->with('success', '登録が完了しました。メール認証を完了してください。');
+        return redirect()->route('email.guide')->with('success', 'メール認証を完了してください。');
     }
 }
 

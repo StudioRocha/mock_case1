@@ -6,6 +6,10 @@ use Tests\TestCase;
 use Illuminate\Support\Facades\Validator;
 use Tests\Support\TestValidationRules;
 
+//  * 会員登録バリデーションのunitテスト
+//  * 
+//  * テストID: 1
+
 class RegisterValidationUnitTest extends TestCase
 {
     /**
