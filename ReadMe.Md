@@ -33,6 +33,29 @@ DB_PORT=3306
 DB_DATABASE=laravel_db
 DB_USERNAME=laravel_user
 DB_PASSWORD=laravel_pass
+
+# ===========================================
+# メール認証設定
+# ===========================================
+# AUTO_VERIFY_ENABLED=true//認証ボタン"認証はこちらから"ボタンをアプリ内に表示（開発環境用）
+# false: 認証ボタンを非表示（本番環境用）
+MAIL_MAILER=smtp
+MAIL_HOST=mailhog
+MAIL_PORT=1025
+MAIL_USERNAME=null
+MAIL_PASSWORD=null
+MAIL_ENCRYPTION=null
+MAIL_FROM_ADDRESS=noreply@example.com
+MAIL_FROM_NAME="${APP_NAME}"
+AUTO_VERIFY_ENABLED=true
+
+# ===========================================
+# Stripe設定
+# ===========================================
+# 開発用のStripe APIキー
+STRIPE_PUBLIC_KEY=pk_test_your_publishable_key_here
+STRIPE_SECRET_KEY=sk_test_your_secret_key_here
+
 ```
 
 5. アプリケーションキーの作成
