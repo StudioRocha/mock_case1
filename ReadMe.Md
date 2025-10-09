@@ -188,7 +188,7 @@ $ sudo chmod -R 777 src/*
 
 ## ER 図
 
-<img src="docs/images/ER.svg" width="640" alt="ER図">
+<img src="docs/images/ER.svg" width="800" alt="ER図">
 
 ソース（編集用）: [docs/ER.dio]
 

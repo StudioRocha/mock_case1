@@ -50,7 +50,11 @@ class ItemController extends Controller
             }
         }
 
-        $items = $query->latest()->paginate(24)->appends($request->query());
+        $items = $query
+            ->with(['user', 'categories'])
+            ->latest()
+            ->paginate(24)
+            ->appends($request->query());
 
         return view('index', [
             'items' => $items,
@@ -61,7 +65,9 @@ class ItemController extends Controller
 
     public function create()
     {
-        $categories = Category::orderBy('category_names')->get();
+        $categories = cache()->remember('categories', 3600, function () {
+            return Category::orderBy('category_names')->get();
+        });
         $conditions = [1 => '良好', 2 => '目立った傷や汚れ無し', 3 => 'やや傷や汚れあり', 4 => '状態が悪い'];
         return view('sell', compact('categories','conditions'));
     }

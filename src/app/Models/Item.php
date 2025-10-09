@@ -22,9 +22,14 @@ class Item extends Model
         'is_sold',
     ];
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function categories()
     {
-        return $this->belongsToMany(Category::class, 'category_item');
+        return $this->belongsToMany(Category::class, 'category_items');
     }
 
     public function comments()

@@ -193,7 +193,7 @@ class RegisterValidationTest extends TestCase
      *  2) 全ての必要項目を正しく入力する
      *  3) 登録ボタンを押す
      * 
-     * 期待挙動: 会員情報が登録され、プロフィール設定画面に遷移する
+     * 期待挙動: 会員情報が登録され、メール認証誘導画面に遷移する
      */
     public function test_register_with_valid_data_redirects_to_profile()
     {
@@ -224,6 +224,9 @@ class RegisterValidationTest extends TestCase
 
         // 期待挙動: セッションにuser_idが保存されている（自動認証用）
         $this->assertNotNull(session('user_id'));
+        
+        // 期待挙動: メール認証誘導画面にリダイレクトされる
+        $response->assertRedirect('/email/guide');
     }
 
 }
