@@ -185,6 +185,8 @@ $ sudo chmod -R 777 src/*
 -   php:8.1-fpm
 -   Laravel 8.83.8
 -   MySQL 8.0.26
+-   mailhog
+-   stripe
 
 ## ER 図
 
