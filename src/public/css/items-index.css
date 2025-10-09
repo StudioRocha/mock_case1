@@ -1,6 +1,7 @@
 /* / (トップ) 専用のカード名フォントサイズ拡大 */
 .c-card__name {
-    font-size: clamp(16px, 1.6vw, 18px);
+    font-size: clamp(18px, 1.8vw, 20px);
+    font-weight: 500;
     line-height: 1.5;
 }
 .p-top {

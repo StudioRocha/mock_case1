@@ -46,8 +46,8 @@
                                 <input
                                     class="form-control c-search__input"
                                     type="text"
-                                    name="q"
-                                    value="{{ old('q', $keyword ?? '') }}"
+                                    name="keyword"
+                                    value="{{ old('keyword', $keyword ?? '') }}"
                                     placeholder="なにをお探しですか？"
                                 />
                                 <button

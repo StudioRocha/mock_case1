@@ -4,14 +4,14 @@
 <div class="p-top-tabs">
     <div class="p-tabs">
         <a
-            href="{{ route('items.index', array_filter(['q' => $keyword])) }}"
+            href="{{ route('items.index', array_filter(['keyword' => $keyword])) }}"
             class="p-tabs__tab {{
                 $activeTab === 'recommend' ? 'p-tabs__tab--active' : ''
             }}"
             >おすすめ</a
         >
         <a
-            href="{{ route('items.index', array_filter(['tab' => 'mylist','q' => $keyword])) }}"
+            href="{{ route('items.index', array_filter(['tab' => 'mylist','keyword' => $keyword])) }}"
             class="p-tabs__tab {{
                 $activeTab === 'mylist' ? 'p-tabs__tab--active' : ''
             }}"

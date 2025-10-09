@@ -22,8 +22,8 @@ class ItemController extends Controller
     {
         $query = Item::query();
 
-        if ($request->filled('q')) {
-            $keyword = $request->input('q');
+        if ($request->filled('keyword')) {
+            $keyword = $request->input('keyword');
             $query->where('item_names', 'like', "%{$keyword}%");
         }
 
@@ -59,7 +59,7 @@ class ItemController extends Controller
         return view('index', [
             'items' => $items,
             'activeTab' => $activeTab,
-            'keyword' => $request->input('q', ''),
+            'keyword' => $request->input('keyword', ''),
         ]);
     }
 
