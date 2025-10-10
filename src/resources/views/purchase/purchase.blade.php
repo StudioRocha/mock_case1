@@ -9,7 +9,7 @@
                 <div class="p-purchase__product-image">
                     <img
                         class="p-purchase__img"
-                        src="{{ asset(Str::startsWith($item->item_image_paths,'http') ? $item->item_image_paths : 'storage/'.$item->item_image_paths) }}"
+                        src="{{ asset(Str::startsWith($item->item_image_paths, 'http') ? $item->item_image_paths : (Str::startsWith($item->item_image_paths, 'images/') ? $item->item_image_paths : 'storage/'.$item->item_image_paths)) }}"
                         alt="{{ $item->item_names }}"
                     />
                 </div>

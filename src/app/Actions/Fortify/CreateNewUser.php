@@ -28,25 +28,20 @@ class CreateNewUser implements CreatesNewUsers
         
         Validator::make($input, $rules, $messages)->validate();
 
-                // ワンクリック認証用のトークンを生成
-                $verificationToken = \Illuminate\Support\Str::random(60);
-                
-                // ユーザーをデータベースに登録（メール認証前）
-                $user = User::create([
-                    'name' => $input['username'],
-                    'email' => $input['email'],
-                    'password' => Hash::make($input['password']),
-                    'email_verified_at' => null, // メール認証前はnull
-                    'verification_token' => $verificationToken,
-                    'verification_token_expires_at' => now()->addHours(24), // 24時間で期限切れ
-                ]);
-        
+        // ユーザーをデータベースに登録（メール認証前）
+        $user = User::create([
+            'name' => $input['username'],
+            'email' => $input['email'],
+            'password' => Hash::make($input['password']),
+            'email_verified_at' => null, // メール認証前はnull
+        ]);
+
         // 開発環境用：ユーザーIDをセッションに保存（自動認証用）
         if (config('app.auto_verify_enabled', false)) {
             Session::put('user_id', $user->id);
         }
         
-        // メール認証メールを送信
+        // メール認証メールを送信（認証コード生成も含む）
         $emailAuthController = new EmailAuthController();
         $emailAuthController->sendVerificationEmail($user);
         

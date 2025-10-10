@@ -5,13 +5,15 @@ namespace Tests\Unit;
 use Tests\TestCase;
 use Illuminate\Support\Facades\Validator;
 use Tests\Support\TestValidationRules;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
-//  * 会員登録バリデーションのunitテスト
+//  * 会員登録機能のunitテスト
 //  * 
 //  * テストID: 1
 
-class RegisterValidationUnitTest extends TestCase
+class RegisterUnitTest extends TestCase
 {
+    use RefreshDatabase;
     /**
      * 名前未入力時にバリデーションメッセージが表示されることを検証する。
      */

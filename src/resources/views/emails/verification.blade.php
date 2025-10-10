@@ -11,30 +11,29 @@
 
         <p>ご登録いただき、ありがとうございます。</p>
 
-        <p>以下のボタンをクリックしてメール認証を完了してください。</p>
+        <p>以下の認証コードを入力してメール認証を完了してください：</p>
 
         <div style="text-align: center; margin: 30px 0">
-            <a
-                href="{{ $verificationUrl }}"
-                target="_self"
+            <div
                 style="
-                    background-color: #007bff;
-                    color: white;
-                    padding: 15px 30px;
-                    text-decoration: none;
-                    border-radius: 5px;
-                    font-size: 16px;
+                    background-color: #f5f5f5;
+                    padding: 20px;
+                    font-size: 32px;
                     font-weight: bold;
+                    letter-spacing: 8px;
+                    border: 2px solid #007bff;
+                    border-radius: 8px;
                     display: inline-block;
+                    font-family: monospace;
                 "
             >
-                🚀 メール認証を完了する
-            </a>
+                {{ $verificationCode }}
+            </div>
         </div>
 
-        <p>
-            ボタンがクリックできない場合は、以下のリンクをコピーしてブラウザに貼り付けてください：
-        </p>
+        <p>認証コードの有効期限は24時間です。</p>
+
+        <p>認証コード入力画面は以下のURLからアクセスできます：</p>
 
         <div
             style="
@@ -45,12 +44,10 @@
                 margin: 20px 0;
             "
         >
-            <a href="{{ $verificationUrl }}" target="_self">{{
-                $verificationUrl
+            <a href="{{ route('email.verify.code') }}">{{
+                route("email.verify.code")
             }}</a>
         </div>
-
-        <p>認証リンクの有効期限は24時間です。</p>
 
         <p>
             もしこのメールに心当たりがない場合は、このメールを無視してください。

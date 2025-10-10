@@ -15,13 +15,13 @@ class ItemFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'item_image_paths' => 'https://via.placeholder.com/400x300?text=Item+Image',
+            'item_image_paths' => 'images/items/watch.jpg',
             'item_names' => $this->faker->words(3, true),
             'brand_names' => $this->faker->company(),
             'item_prices' => $this->faker->numberBetween(100, 50000),
             'like_counts' => $this->faker->numberBetween(0, 50),
             'comment_counts' => $this->faker->numberBetween(0, 10),
-            'item_descriptions' => $this->faker->paragraph(),
+            'item_descriptions' => substr($this->faker->paragraph(), 0, 255),
             'conditions' => $this->faker->numberBetween(1, 4),
             'is_sold' => false,
         ];

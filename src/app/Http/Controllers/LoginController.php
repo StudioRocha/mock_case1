@@ -28,10 +28,10 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
-        $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
+        $rules = config('validation.login.rules');
+        $messages = config('validation.login.messages');
+        
+        $credentials = $request->validate($rules, $messages);
         
         if (Auth::attempt($credentials)) {
             $user = Auth::user();

@@ -28,7 +28,8 @@ Route::get('/', [ItemController::class, 'index'])->name('items.index');
 
 // メール認証関連ルート（認証前でもアクセス可能）
 Route::get('/email/guide', [EmailAuthController::class, 'guide'])->name('email.guide');
-Route::get('/email/verify/{token}', [EmailAuthController::class, 'verifyToken'])->name('email.verify.token');
+Route::get('/email/verify/code', [EmailAuthController::class, 'showCodeVerificationPage'])->name('email.verify.code');
+Route::post('/email/verify/code', [EmailAuthController::class, 'verifyCode'])->name('email.verify.execute');
 Route::get('/email/resend', [EmailAuthController::class, 'resend'])->name('email.resend');
 Route::get('/email/auto-verify', [EmailAuthController::class, 'autoVerify'])->name('email.auto-verify');
 

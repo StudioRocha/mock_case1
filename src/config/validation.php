@@ -25,4 +25,22 @@ return [
             'different_password' => 'different_password',
         ],
     ],
+    'login' => [
+        'rules' => [
+            'email' => ['required', 'email'],
+            'password' => ['required'],
+        ],
+        'messages' => [
+            'email.required' => 'メールアドレスを入力してください',
+            'email.email' => 'メールアドレスはメール形式で入力してください',
+            'password.required' => 'パスワードを入力してください',
+        ],
+        'test_data' => [
+            'valid_email' => 'test@example.com',
+            'valid_password' => 'password123',
+            'invalid_email' => 'invalid@example.com',
+            'invalid_password' => 'wrongpassword',
+            'invalid_format_email' => 'invalid-email-format',
+        ],
+    ],
 ];

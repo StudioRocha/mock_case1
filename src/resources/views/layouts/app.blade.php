@@ -14,7 +14,7 @@
         @stack('styles')
     </head>
     <body
-        class="l-body @if(request()->routeIs('email.guide')) email-auth-page @endif"
+        class="l-body @if(request()->routeIs('email.guide') || request()->routeIs('email.verify.code')) email-auth-page @endif"
     >
         <header class="l-header">
             <div class="l-header__inner">

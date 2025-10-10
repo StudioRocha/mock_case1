@@ -20,12 +20,25 @@ class UserSeeder extends Seeder
 
         // 通常のSeeder実行（固定ユーザー1人 + ランダムユーザー10人）
         // テスト用の固定ユーザーを作成
-        User::firstOrCreate(
+        $fixedUser = User::firstOrCreate(
             ['email' => 'dev@example.com'],
             [
                 'name' => 'Developer',
                 'password' => Hash::make('password'),
                 'email_verified_at' => now(),
+            ]
+        );
+
+        // 固定ユーザーのプロフィールを作成（存在しない場合のみ）
+        Profile::firstOrCreate(
+            ['user_id' => $fixedUser->id],
+            [
+                'user_id' => $fixedUser->id,
+                'postal_codes' => '123-4567',
+                'addresses' => '東京都渋谷区',
+                'building_names' => 'テストビル 101',
+                'usernames' => 'Developer',
+                'avatar_paths' => null,
             ]
         );
 

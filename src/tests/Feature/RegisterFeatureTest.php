@@ -6,11 +6,11 @@ use Tests\TestCase;
 use Tests\Support\TestValidationRules;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-//  * 会員登録バリデーションのFeatureテスト
+//  * 会員登録機能のFeatureテスト
 //  * 
 //  * テストID: 1
 
-class RegisterValidationTest extends TestCase
+class RegisterFeatureTest extends TestCase
 {
     use RefreshDatabase;
     /**

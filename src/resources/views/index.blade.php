@@ -29,7 +29,7 @@
                 <span class="c-card__badge">Sold</span>
                 @endif @if($item->item_image_paths)
                 <img
-                    src="{{ asset(Str::startsWith($item->item_image_paths, 'http') ? $item->item_image_paths : 'storage/'.$item->item_image_paths) }}"
+                    src="{{ asset(Str::startsWith($item->item_image_paths, 'http') ? $item->item_image_paths : (Str::startsWith($item->item_image_paths, 'images/') ? $item->item_image_paths : 'storage/'.$item->item_image_paths)) }}"
                     alt="{{ $item->item_names }}"
                     class="c-card__img"
                 />

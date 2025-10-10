@@ -35,7 +35,7 @@ DB_USERNAME=laravel_user
 DB_PASSWORD=laravel_pass
 
 # ===========================================
-# メール認証設定
+# メール認証設定/応用要件
 # ===========================================
 # AUTO_VERIFY_ENABLED=true//認証ボタン"認証はこちらから"ボタンをアプリ内に表示（開発環境用）
 # false: 認証ボタンを非表示（本番環境用）
@@ -50,9 +50,9 @@ MAIL_FROM_NAME="${APP_NAME}"
 AUTO_VERIFY_ENABLED=true
 
 # ===========================================
-# Stripe設定
+# Stripe設定/応用要件
 # ===========================================
-# 開発用のStripe APIキー/開発環境ではwebhookは未使用のためSTRIPE_WEBHOOK_SECRETの値はそのまま
+# 開発用のStripe APIキー/開発環境ではwebhookは未使用のためSTRIPE_WEBHOOK_SECRETの値はそのまま。
 STRIPE_PUBLIC_KEY=pk_test_your_publishable_key_here
 STRIPE_SECRET_KEY=sk_test_your_secret_key_here
 STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret_here
@@ -83,13 +83,12 @@ php artisan migrate
 #### カテゴリデータ
 
 -   **テーブル**: `categories`
--   **データ数**: 5 件
+-   **データ数**:14 件
 -   **内容**:
-    -   エレクトロニクス
-    -   ファッション
-    -   ホーム&ガーデン
-    -   スポーツ&アウトドア
-    -   本&メディア
+    -   'ファッション','家電','インテリア',
+        'レディース','メンズ','コスメ','本',
+        'ゲーム','スポーツ','キッチン','ハンドメイド',
+        'アクセサリー','おもちゃ','ベビー・キッズ'
 
 #### 商品データ
 
@@ -148,17 +147,12 @@ mysql -u root -p -e 'CREATE DATABASE laravel_test_db;'
 php artisan migrate:fresh --env=testing
 ```
 
-### テスト実行
+### 機能テスト実行
 
 ```bash
 # Featureテスト
 ./vendor/bin/phpunit tests/Feature
 
-# Unitテスト
-./vendor/bin/phpunit tests/Unit
-
-# 全テスト
-./vendor/bin/phpunit
 ```
 
 ### 注意事項
@@ -186,7 +180,10 @@ $ sudo chmod -R 777 src/*
 -   Laravel 8.83.8
 -   MySQL 8.0.26
 -   mailhog
--   stripe
+
+## 外部サービス・API
+
+-   Stripe (決済処理)
 
 ## ER 図
 

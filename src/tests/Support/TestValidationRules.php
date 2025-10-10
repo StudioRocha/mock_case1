@@ -44,4 +44,38 @@ class TestValidationRules
             'different_password' => 'different_password',
         ]);
     }
+
+    /**
+     * 設定ファイルからログイン用バリデーションルールを取得
+     * 参照元: config/validation.php -> login.rules
+     */
+    public static function getLoginRules(): array
+    {
+        return config('validation.login.rules');
+    }
+
+    /**
+     * 設定ファイルからログイン用バリデーションメッセージを取得
+     * 参照元: config/validation.php -> login.messages
+     */
+    public static function getLoginMessages(): array
+    {
+        return config('validation.login.messages');
+    }
+
+    /**
+     * 設定ファイルからログイン用テストデータを取得
+     * 参照元: config/validation.php -> login.test_data
+     */
+    public static function getLoginTestData(): array
+    {
+        return config('validation.login.test_data', [
+            // フォールバック用のデフォルト値（設定ファイルが存在しない場合のみ使用）
+            'valid_email' => 'test@example.com',
+            'valid_password' => 'password123',
+            'invalid_email' => 'invalid@example.com',
+            'invalid_password' => 'wrongpassword',
+            'invalid_format_email' => 'invalid-email-format',
+        ]);
+    }
 }

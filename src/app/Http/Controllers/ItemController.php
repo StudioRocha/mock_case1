@@ -88,6 +88,11 @@ class ItemController extends Controller
         $comment->user_id = auth()->id();
         $comment->comment_body = $data['comment_body'];
         $comment->save();
+        
+        // コメント数を更新（明示的に計算）
+        $item->comment_counts = $item->comments()->count();
+        $item->save();
+        
         return back()->with('success', 'コメントを投稿しました');
     }
 

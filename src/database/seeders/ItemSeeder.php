@@ -6,8 +6,6 @@ use Illuminate\Database\Seeder;
 use App\Models\Item;
 use App\Models\User;
 use App\Models\Category;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Http;
 
 class ItemSeeder extends Seeder
 {
@@ -35,7 +33,7 @@ class ItemSeeder extends Seeder
                 'item_prices' => 15000,
                 'brand_names' => 'Rolax',
                 'item_descriptions' => 'スタイリッシュなデザインのメンズ腕時計',
-                'item_image_paths' => 'https://coachtech-matter.s3.ap-northeast-1.amazonaws.com/image/Armani+Mens+Clock.jpg',
+                'item_image_paths' => 'images/items/watch.jpg',
                 'conditions' => 1, // 良好
             ],
             [
@@ -43,7 +41,7 @@ class ItemSeeder extends Seeder
                 'item_prices' => 5000,
                 'brand_names' => '西芝',
                 'item_descriptions' => '高速で信頼性の高いハードディスク',
-                'item_image_paths' => 'https://coachtech-matter.s3.ap-northeast-1.amazonaws.com/image/HDD+Hard+Disk.jpg',
+                'item_image_paths' => 'images/items/hdd.jpg',
                 'conditions' => 2, // 目立った傷や汚れなし
             ],
             [
@@ -51,7 +49,7 @@ class ItemSeeder extends Seeder
                 'item_prices' => 300,
                 'brand_names' => 'なし',
                 'item_descriptions' => '新鮮な玉ねぎ3束のセット',
-                'item_image_paths' => 'https://coachtech-matter.s3.ap-northeast-1.amazonaws.com/image/iLoveIMG+d.jpg',
+                'item_image_paths' => 'images/items/onion.jpg',
                 'conditions' => 3, // やや傷や汚れあり
             ],
             [
@@ -59,7 +57,7 @@ class ItemSeeder extends Seeder
                 'item_prices' => 4000,
                 'brand_names' => '',
                 'item_descriptions' => 'クラシックなデザインの革靴',
-                'item_image_paths' => 'https://coachtech-matter.s3.ap-northeast-1.amazonaws.com/image/Leather+Shoes+Product+Photo.jpg',
+                'item_image_paths' => 'images/items/shoes.jpg',
                 'conditions' => 4, // 状態が悪い
             ],
             [
@@ -67,7 +65,7 @@ class ItemSeeder extends Seeder
                 'item_prices' => 45000,
                 'brand_names' => '',
                 'item_descriptions' => '高性能なノートパソコン',
-                'item_image_paths' => 'https://coachtech-matter.s3.ap-northeast-1.amazonaws.com/image/Living+Room+Laptop.jpg',
+                'item_image_paths' => 'images/items/laptop.jpg',
                 'conditions' => 1, // 良好
             ],
             [
@@ -75,7 +73,7 @@ class ItemSeeder extends Seeder
                 'item_prices' => 8000,
                 'brand_names' => 'なし',
                 'item_descriptions' => '高音質のレコーディング用マイク',
-                'item_image_paths' => 'https://coachtech-matter.s3.ap-northeast-1.amazonaws.com/image/Music+Mic+4632231.jpg',
+                'item_image_paths' => 'images/items/mic.jpg',
                 'conditions' => 2, // 目立った傷や汚れなし
             ],
             [
@@ -83,7 +81,7 @@ class ItemSeeder extends Seeder
                 'item_prices' => 3500,
                 'brand_names' => '',
                 'item_descriptions' => 'おしゃれなショルダーバッグ',
-                'item_image_paths' => 'https://coachtech-matter.s3.ap-northeast-1.amazonaws.com/image/Purse+fashion+pocket.jpg',
+                'item_image_paths' => 'images/items/bag.jpg',
                 'conditions' => 3, // やや傷や汚れあり
             ],
             [
@@ -91,7 +89,7 @@ class ItemSeeder extends Seeder
                 'item_prices' => 500,
                 'brand_names' => 'なし',
                 'item_descriptions' => '使いやすいタンブラー',
-                'item_image_paths' => 'https://coachtech-matter.s3.ap-northeast-1.amazonaws.com/image/Tumbler+souvenir.jpg',
+                'item_image_paths' => 'images/items/tumbler.jpg',
                 'conditions' => 4, // 状態が悪い
             ],
             [
@@ -99,7 +97,7 @@ class ItemSeeder extends Seeder
                 'item_prices' => 4000,
                 'brand_names' => 'Starbacks',
                 'item_descriptions' => '手動のコーヒーミル',
-                'item_image_paths' => 'https://coachtech-matter.s3.ap-northeast-1.amazonaws.com/image/Waitress+with+Coffee+Grinder.jpg',
+                'item_image_paths' => 'images/items/coffee-grinder.jpg',
                 'conditions' => 1, // 良好
             ],
             [
@@ -107,7 +105,7 @@ class ItemSeeder extends Seeder
                 'item_prices' => 2500,
                 'brand_names' => '',
                 'item_descriptions' => '便利なメイクアップセット',
-                'item_image_paths' => 'https://coachtech-matter.s3.ap-northeast-1.amazonaws.com/image/%E5%A4%96%E5%87%BA%E3%83%A1%E3%82%A4%E3%82%AF%E3%82%A2%E3%83%83%E3%83%95%E3%82%9A%E3%82%BB%E3%83%83%E3%83%88.jpg',
+                'item_image_paths' => 'images/items/makeup-set.jpg',
                 'conditions' => 2, // 目立った傷や汚れなし
             ],
         ];
@@ -118,14 +116,11 @@ class ItemSeeder extends Seeder
             $userIndex = $index % $users->count();
             $assignedUser = $users->get($userIndex);
             
-            // 画像をローカルにダウンロード
-            $localImagePath = $this->downloadImage($itemData['item_image_paths'], $itemData['item_names']);
-            
             $item = Item::firstOrCreate(
                 ['item_names' => $itemData['item_names']], // 商品名で重複チェック
                 [
                     'user_id' => $assignedUser->id,
-                    'item_image_paths' => $localImagePath, // ローカルパスを使用
+                    'item_image_paths' => $itemData['item_image_paths'], // ローカルパスをそのまま使用
                     'item_names' => $itemData['item_names'],
                     'brand_names' => $itemData['brand_names'] ?? null,
                     'item_prices' => $itemData['item_prices'],
@@ -148,48 +143,4 @@ class ItemSeeder extends Seeder
         $this->command->info('固定商品10個を作成しました（重複なし）。');
     }
 
-    /**
-     * 外部画像をダウンロードしてローカルに保存
-     */
-    private function downloadImage($imageUrl, $itemName)
-    {
-        try {
-            // 画像をダウンロード
-            $response = Http::timeout(30)->get($imageUrl);
-            
-            if (!$response->successful()) {
-                $this->command->warn("画像のダウンロードに失敗しました: {$imageUrl}");
-                return $imageUrl; // 失敗時は元のURLを返す
-            }
-
-            // ファイル名を生成（商品名を英語にマッピング）
-            $itemNameMap = [
-                '腕時計' => 'watch',
-                'HDD' => 'hdd',
-                '玉ねぎ3束' => 'onion',
-                '革靴' => 'shoes',
-                'ノートPC' => 'laptop',
-                'マイク' => 'microphone',
-                'ショルダーバッグ' => 'bag',
-                'タンブラー' => 'tumbler',
-                'コーヒーミル' => 'coffee_mill',
-                'メイクセット' => 'makeup_set',
-            ];
-            
-            $safeFileName = $itemNameMap[$itemName] ?? 'item';
-            $extension = pathinfo(parse_url($imageUrl, PHP_URL_PATH), PATHINFO_EXTENSION);
-            $fileName = $safeFileName . '_' . time() . '.' . ($extension ?: 'jpg');
-            
-            // ローカルに保存
-            $localPath = 'items/' . $fileName;
-            Storage::disk('public')->put($localPath, $response->body());
-            
-            $this->command->info("画像をダウンロードしました: {$fileName}");
-            return $localPath;
-            
-        } catch (\Exception $e) {
-            $this->command->warn("画像のダウンロード中にエラーが発生しました: {$e->getMessage()}");
-            return $imageUrl; // 失敗時は元のURLを返す
-        }
-    }
 }
