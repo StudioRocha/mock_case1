@@ -21,7 +21,7 @@
                 href="{{ route('email.auto-verify') }}"
                 class="p-email-auth__auto-btn"
             >
-                MailHog経由でコード入力なしで承認(開発環境用)
+                MailHog経由/コード入力なしで承認(開発環境用)
             </a>
             @endif
 
