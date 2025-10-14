@@ -73,7 +73,29 @@ php artisan key:generate
 php artisan migrate
 ```
 
-7. シーディングの実行
+7. ストレージリンク作成<BR>
+ストレージでローカルＰＣから画像データ等をアップして使うアプリの場合は下記を実行。
+
+```bash
+php artisan storage:link
+```
+
+8. ブラウザで開発環境に接続
+
+http://localhost/
+
+もし接続時にUnexpectedValueException ページエラーが出た場合。<BR>
+![Warning](https://img.shields.io/badge/Warning-Permission%20denied-red)
+
+Windows WSL 環境でhttp://localhost/　接続時にファイル権限のエラーが出る場合があります。
+ "Permission denied"というエラーが発生した場合は、
+このプロジェクトの root ディレクトリで下記のコマンドを実行してパーミッションを変更後に再接続。
+
+```bash
+$ sudo chmod -R 777 src/*
+```
+
+9. シーディングの実行(指定されたダミーデータの一括生成)
 
 ```bash
  php artisan db:seed
@@ -182,17 +204,6 @@ php artisan migrate:fresh --env=testing
 -   `RefreshDatabase`トレイトにより、テスト実行時に自動的にデータベースがリフレッシュされます
 
 <BR>
-
-![Warning](https://img.shields.io/badge/Warning-Permission%20denied-red)
-UnexpectedValueException ページエラーが出た場合
-
-Windows WSL 環境ではファイル権限のエラーが出る場合があります。
-ブラウザで localhost 接続時に "Permission denied"というエラーが発生した場合は、
-このプロジェクトの root ディレクトリで下記のコマンドを実行して再接続して下さい。
-
-```bash
-$ sudo chmod -R 777 src/*
-```
 
 ## 使用技術(実行環境)
 
