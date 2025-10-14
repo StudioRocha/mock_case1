@@ -24,7 +24,11 @@
 ```
 
 3. .env.example から .env を作成し、環境変数を設定
+
+
 4. .env に以下の環境変数を設定、又は追加
+<BR>
+# <span style="color: red; font-size: 12px;">※応用要件のPhpUnitを用いたテストケースを実施する場合は STRIPE_PUBLIC_KEY/STRIPE_SECRET_KEY の値を自身の stripe アカウントのダッシュボードから取得して設定。</span>
 
 ```text
 DB_CONNECTION=mysql
@@ -52,7 +56,6 @@ AUTO_VERIFY_ENABLED=true
 # ===========================================
 # Stripe設定/応用要件
 # ===========================================
-# PhpUnitを用いたテストケースを実施する場合は、STRIPE_PUBLIC_KEY/STRIPE_SECRET_KEY の値を自身のstripeアカウントのダッシュボードから取得。
 # 開発環境ではwebhookは未使用のためSTRIPE_WEBHOOK_SECRETの値はそのまま。
 
 STRIPE_PUBLIC_KEY=pk_test_your_publishable_key_here
@@ -64,20 +67,21 @@ STRIPE_WEBHOOK_ENABLED=false
 ```
 
 5. アプリケーションキーの作成
-<BR> PHP コンテナ上
+   <BR> PHP コンテナ上
 
 ```bash
 php artisan key:generate
 ```
 
 6. マイグレーションの実行
-<BR> PHP コンテナ上
+   <BR> PHP コンテナ上
+
 ```bash
 php artisan migrate
 ```
 
 7. 全キャッシュクリア（一括）
-<BR> PHP コンテナ上
+   <BR> PHP コンテナ上
 
 ```bash
 php artisan optimize:clear
@@ -85,7 +89,7 @@ php artisan optimize:clear
 ```
 
 8. ストレージリンク作成<BR>
-<BR> PHP コンテナ上
+   <BR> PHP コンテナ上
 
 ```bash
 php artisan storage:link
@@ -96,11 +100,11 @@ php artisan storage:link
 
 http://localhost/
 
-もし接続時にUnexpectedValueException ページエラーが出た場合。<BR>
+もし接続時に UnexpectedValueException ページエラーが出た場合。<BR>
 ![Warning](https://img.shields.io/badge/Warning-Permission%20denied-red)
 
-Windows WSL 環境でhttp://localhost/　接続時にファイル権限のエラーが出る場合があります。
- "Permission denied"というエラーが発生した場合は、
+Windows WSL 環境で http://localhost/　接続時にファイル権限のエラーが出る場合があります。
+"Permission denied"というエラーが発生した場合は、
 このプロジェクトの root ディレクトリで下記のコマンドを実行してパーミッションを変更後に再接続。
 
 ```bash
@@ -171,20 +175,25 @@ $ sudo chmod -R 777 src/*
 Feature テストを実行するために、テスト用データベースの準備が必要です。
 
 #### 1. テスト用データベースの作成
-MySQLコンテ上で
+
+MySQL コンテ上で
 
 ```bash
 mysql -u root -p -e 'CREATE DATABASE laravel_test_db;'
 ```
 
 #### 2. テスト用データベースのマイグレーション
-phpコンテナ上
+
+php コンテナ上
+
 ```bash
 DB_DATABASE=laravel_test_db php artisan migrate:fresh
 ```
 
 ### 機能テスト実行
-phpコンテナ上
+
+php コンテナ上
+
 ```bash
 # Featureテスト
 ./vendor/bin/phpunit tests/Feature
