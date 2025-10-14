@@ -155,6 +155,25 @@ php artisan migrate:fresh --env=testing
 
 ```
 
+### Feature テスト一覧：
+
+1. **RegisterFeatureTest.php** - 会員登録機能（テスト ID: 1）
+2. **LoginFeatureTest.php** - ログイン機能（テスト ID: 2）
+3. **LogoutFeatureTest.php** - ログアウト機能（テスト ID: 3）
+4. **ItemListFeatureTest.php** - 商品一覧機能（テスト ID: 4）
+5. **MyListFeatureTest.php** - マイリスト機能（テスト ID: 5）
+6. **ItemSearchFeatureTest.php** - 商品検索機能（テスト ID: 6）
+7. **ItemDetailFeatureTest.php** - 商品詳細表示機能（テスト ID: 7）
+8. **ItemLikeFeatureTest.php** - 商品いいね機能（テスト ID: 8）
+9. **ItemCommentFeatureTest.php** - 商品コメント機能（テスト ID: 9）
+10. **ItemPurchaseFeatureTest.php** - 商品購入機能（テスト ID: 10）
+11. **PaymentMethodSelectionFeatureTest.php** - 支払い方法選択機能（テスト ID: 11）
+12. **AddressChangeFeatureTest.php** - 住所変更機能（テスト ID: 12）
+13. **UserProfileFeatureTest.php** - ユーザープロフィール表示機能（テスト ID: 13）
+14. **UserProfileUpdateFeatureTest.php** - ユーザープロフィール更新機能（テスト ID: 14）
+15. **ItemRegistrationFeatureTest.php** - 商品出品機能（テスト ID: 15）
+16. **EmailVerificationFeatureTest.php** - メール認証機能（テスト ID: 16）
+
 ### 注意事項
 
 -   上記コマンドは PHP コンテナ内で実行してください
