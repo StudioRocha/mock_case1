@@ -62,25 +62,35 @@ STRIPE_WEBHOOK_ENABLED=false
 ```
 
 5. アプリケーションキーの作成
+<BR> PHP コンテナ上
 
 ```bash
 php artisan key:generate
 ```
 
 6. マイグレーションの実行
-
+<BR> PHP コンテナ上
 ```bash
 php artisan migrate
 ```
 
-7. ストレージリンク作成<BR>
-ストレージでローカルＰＣから画像データ等をアップして使うアプリの場合は下記を実行。
+7. 全キャッシュクリア（一括）
+<BR> PHP コンテナ上
+
+```bash
+php artisan optimize:clear
+
+```
+
+8. ストレージリンク作成<BR>
+<BR> PHP コンテナ上
 
 ```bash
 php artisan storage:link
+
 ```
 
-8. ブラウザで開発環境に接続
+9. ブラウザで開発環境に接続
 
 http://localhost/
 
@@ -95,7 +105,7 @@ Windows WSL 環境でhttp://localhost/　接続時にファイル権限のエラ
 $ sudo chmod -R 777 src/*
 ```
 
-9. シーディングの実行(指定されたダミーデータの一括生成)
+10. シーディングの実行(指定されたダミーデータの一括生成)
 
 ```bash
  php artisan db:seed
