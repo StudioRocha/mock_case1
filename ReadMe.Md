@@ -57,6 +57,7 @@ STRIPE_PUBLIC_KEY=pk_test_your_publishable_key_here
 STRIPE_SECRET_KEY=sk_test_your_secret_key_here
 STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret_here
 STRIPE_ENVIRONMENT=test
+STRIPE_WEBHOOK_ENABLED=false
 
 ```
 
@@ -202,7 +203,46 @@ $ sudo chmod -R 777 src/*
 
 ## 外部サービス・API
 
--   Stripe (決済処理)
+### Stripe 決済 API
+
+**決済処理**: Stripe Checkout API を使用
+
+#### 設定情報
+
+-   **環境**: テスト環境（test mode）
+-   **通貨**: JPY（日本円）
+-   **決済方法**:
+    -   クレジットカード決済
+    -   コンビニ決済（Konbini）
+
+#### API 設定ファイル
+
+-   **設定ファイル**: `src/config/stripe.php`
+-   **サービスクラス**: `src/app/Services/StripeService.php`
+
+**注意**: `STRIPE_PUBLIC_KEY`と`STRIPE_SECRET_KEY`には、あなたの Stripe アカウントの実際の API キーを入力してください。
+
+-   Stripe ダッシュボード → 開発者 → API キー から取得可能
+-   テスト環境では `pk_test_` と `sk_test_` で始まるキーを使用 -　　開発環境では　 webhook は未使用
+
+#### 決済フロー
+
+1. **決済セッション作成**: `StripeService::createCheckoutSession()`
+2. **Stripe Checkout 画面**: ユーザーが決済情報を入力
+3. **決済完了**: `stripe.success`ルートで処理
+4. **決済キャンセル**: `items.show`ルートに戻る
+
+#### テスト用カード情報
+
+-   **成功**: 4242 4242 4242 4242
+-   **失敗**: 4000 0000 0000 0002
+-   **認証必要**: 4000 0025 0000 3155
+
+#### 実装詳細
+
+-   **モック化**: テスト時は StripeService をモック化
+-   **エラーハンドリング**: ApiErrorException で例外処理
+-   **メタデータ**: ユーザー ID、商品 ID、配送先住所を保存
 
 ## ER 図
 
@@ -214,3 +254,4 @@ $ sudo chmod -R 777 src/*
 
 -   開発環境：http://localhost/
 -   phpMyAdmin:：http://localhost:8080/
+-   MailHog ：http://localhost:8025/

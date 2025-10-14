@@ -37,12 +37,25 @@ class StripeController extends Controller
             return redirect()->route('items.show', $item)->with('error', '自分が出品した商品は購入できません。');
         }
 
-        // コンビニ決済の場合は即座に在庫を予約
-        if ($request->payment_method === 'convenience_store') {
-            $item->update(['is_sold' => true]);
-        }
-
         try {
+            // コンビニ決済の場合は、セッション作成時点で在庫を予約
+            if ($request->payment_method === 'convenience_store') {
+                DB::transaction(function() use ($item, $user, $request) {
+                    // 商品を売却済みにマーク
+                    $item->update(['is_sold' => true]);
+                    
+                    // 注文を作成
+                    Order::create([
+                        'user_id' => $user->id,
+                        'item_id' => $item->id,
+                        'total_amount' => $item->item_prices,
+                        'payment_method' => 'convenience_store',
+                        'shipping_address' => $request->shipping_address,
+                        'status' => 'payment_pending', // 支払い待ち
+                    ]);
+                });
+            }
+            
             $session = $this->stripeService->createCheckoutSession(
                 $item,
                 $user,
@@ -78,31 +91,12 @@ class StripeController extends Controller
             Log::info('Session payment_status: ' . $session->payment_status);
             Log::info('Session metadata: ' . json_encode($session->metadata));
             
-            // PaymentIntentの情報を取得
-            if ($session->payment_intent) {
-                $paymentIntent = \Stripe\PaymentIntent::retrieve($session->payment_intent);
-                Log::info('PaymentIntent status: ' . $paymentIntent->status);
-                Log::info('PaymentIntent next_action: ' . json_encode($paymentIntent->next_action));
-                
-                // コンビニ決済の場合のnext_action処理
-                if ($paymentIntent->next_action && $paymentIntent->next_action->type === 'konbini_display_details') {
-                    // コンビニ決済の場合は、支払い待ち状態として処理
-                    DB::transaction(function() use ($item, $session, $paymentIntent) {
-                        Order::create([
-                            'user_id' => $session->metadata->user_id,
-                            'item_id' => $item->id,
-                            'total_amount' => $item->item_prices,
-                            'payment_method' => $session->payment_method_types[0],
-                            'shipping_address' => $session->metadata->shipping_address,
-                            'status' => 'pending', // 支払い待ち状態
-                        ]);
-                        
-                        // 商品を売却済みにマーク（在庫予約）
-                        $item->update(['is_sold' => true]);
-                    });
-                    
-                    return redirect()->route('items.show', $item)->with('info', 'コンビニでの支払い手続きが完了しました。支払い期限までにコンビニでお支払いください。');
-                }
+            // コンビニ決済かどうかを判定
+            $isKonbiniPayment = in_array('konbini', $session->payment_method_types);
+            
+            // コンビニ決済の場合は、既にcreateCheckoutSessionで処理済み
+            if ($isKonbiniPayment) {
+                return redirect()->route('items.index')->with('success', 'コンビニでの支払い手続きが完了しました。支払い期限までにコンビニでお支払いください。');
             }
             
             if ($session->payment_status === 'paid') {

@@ -46,12 +46,15 @@ class StripeService
                     'user_id' => $user->id,
                     'item_id' => $item->id,
                     'shipping_address' => $shippingAddress,
+                    'payment_method' => $paymentMethod,
                 ],
             ];
 
             // コンビニ決済の場合は顧客情報を追加
             if ($paymentMethod === 'convenience_store') {
                 $sessionData['customer_email'] = $user->email;
+                // コンビニ決済の場合、Stripe Checkoutの完了後に自動的にリダイレクト
+                $sessionData['submit_type'] = 'auto';
             }
 
             $session = Session::create($sessionData);
