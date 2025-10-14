@@ -169,6 +169,7 @@ $ sudo chmod -R 777 src/*
 Feature テストを実行するために、テスト用データベースの準備が必要です。
 
 #### 1. テスト用データベースの作成
+. MySQLコンテ上で
 
 ```bash
 mysql -u root -p -e 'CREATE DATABASE laravel_test_db;'
