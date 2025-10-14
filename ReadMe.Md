@@ -169,16 +169,16 @@ $ sudo chmod -R 777 src/*
 Feature テストを実行するために、テスト用データベースの準備が必要です。
 
 #### 1. テスト用データベースの作成
-. MySQLコンテ上で
+MySQLコンテ上で
 
 ```bash
 mysql -u root -p -e 'CREATE DATABASE laravel_test_db;'
 ```
 
 #### 2. テスト用データベースのマイグレーション
-
+phpコンテナ上
 ```bash
-php artisan migrate:fresh --env=testing
+DB_DATABASE=laravel_test_db php artisan migrate:fresh
 ```
 
 ### 機能テスト実行
