@@ -52,7 +52,9 @@ AUTO_VERIFY_ENABLED=true
 # ===========================================
 # Stripe設定/応用要件
 # ===========================================
-# 開発用のStripe APIキー/開発環境ではwebhookは未使用のためSTRIPE_WEBHOOK_SECRETの値はそのまま。
+# PhpUnitを用いたテストケースを実施する場合は、STRIPE_PUBLIC_KEY/STRIPE_SECRET_KEY の値を自身のstripeアカウントのダッシュボードから取得。
+# 開発環境ではwebhookは未使用のためSTRIPE_WEBHOOK_SECRETの値はそのまま。
+
 STRIPE_PUBLIC_KEY=pk_test_your_publishable_key_here
 STRIPE_SECRET_KEY=sk_test_your_secret_key_here
 STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret_here
@@ -182,7 +184,7 @@ DB_DATABASE=laravel_test_db php artisan migrate:fresh
 ```
 
 ### 機能テスト実行
-
+phpコンテナ上
 ```bash
 # Featureテスト
 ./vendor/bin/phpunit tests/Feature
