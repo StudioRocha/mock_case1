@@ -190,8 +190,8 @@ php コンテナ上
 DB_DATABASE=laravel_test_db php artisan migrate:fresh
 ```
 
-もしtest用マイグレーション実行時に UnexpectedValueException エラーが出た場合。<BR>
-![Warning](https://img.shields.io/badge/Warning-Permission%20denied-red)
+テスト用マイグレーション実行時に Laravelのデータベースクエリ例外エラーが出た場合。<BR>
+![Warning](https://img.shields.io/badge/Warning-Illuminate\Database\QueryException-red)
 
 Windows WSL環境では作成したテスト用のDBへの書き込み時にファイル権限のエラーが出る場合があります。
 "Permission denied"というエラーが発生した場合は、下記のコマンドを実行して権限を付与してからテスト用DBマイグレーションを再実行して下さい。
