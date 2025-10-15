@@ -6,6 +6,9 @@
     margin: 24px 0 8px;
     font-weight: 700;
     font-size: 18px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 8px;
+    color: #717171;
 }
 .p-upload {
     display: flex;
