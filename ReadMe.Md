@@ -108,7 +108,7 @@ Windows WSL 環境で http://localhost/　接続時にファイル権限のエ�
 このプロジェクトの root ディレクトリで下記のコマンドを実行してパーミッションを変更後に再接続。
 
 ```bash
-$ sudo chmod -R 777 src/*
+sudo chmod -R 777 src/*
 ```
 
 10. シーディングの実行(指定されたダミーデータの一括生成)
@@ -179,7 +179,7 @@ Feature テストを実行するために、テスト用データベースの準
 MySQL コンテ上で
 
 ```bash
-mysql -u root -p -e 'CREATE DATABASE laravel_test_db;'
+mysql -u root -p'root' -e 'CREATE DATABASE laravel_test_db;'
 ```
 
 #### 2. テスト用データベースのマイグレーション
@@ -193,10 +193,9 @@ DB_DATABASE=laravel_test_db php artisan migrate:fresh
 ### 機能テスト実行
 
 php コンテナ上
-
-```bash
 # Featureテスト
-./vendor/bin/phpunit tests/Feature
+```bash
+php artisan test --testsuite=Feature
 
 ```
 
