@@ -43,6 +43,13 @@ class ProfileController extends Controller
         ];
 
         if ($request->hasFile('avatar')) {
+            // avatarsディレクトリが存在しない場合は作成し、777権限を付与
+            $avatarsPath = storage_path('app/public/avatars');
+            if (!file_exists($avatarsPath)) {
+                mkdir($avatarsPath, 0777, true);
+                chmod($avatarsPath, 0777);
+            }
+            
             $path = $request->file('avatar')->store('avatars', 'public');
             $payload['avatar_paths'] = $path;
         }

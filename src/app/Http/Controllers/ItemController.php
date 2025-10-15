@@ -187,6 +187,13 @@ class ItemController extends Controller
         $user = Auth::user();
         $data = $request->validated();
 
+        // itemsディレクトリが存在しない場合は作成し、777権限を付与
+        $itemsPath = storage_path('app/public/items');
+        if (!file_exists($itemsPath)) {
+            mkdir($itemsPath, 0777, true);
+            chmod($itemsPath, 0777);
+        }
+
         // 元のままストレージに保存
         $path = $request->file('item_image')->store('items', 'public');
 
