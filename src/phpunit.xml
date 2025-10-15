@@ -23,10 +23,8 @@
         <server name="CACHE_DRIVER" value="array"/>
         <server name="DB_CONNECTION" value="mysql"/>
         <server name="DB_DATABASE" value="laravel_test_db"/>
-        <server name="DB_USERNAME" value="root"/>
-        <server name="DB_PASSWORD" value="root"/>
-        <!-- <server name="DB_USERNAME" value="laravel_user"/> -->
-        <!-- <server name="DB_PASSWORD" value="laravel_pass"/> -->
+        <server name="DB_USERNAME" value="laravel_user"/>
+        <server name="DB_PASSWORD" value="laravel_pass"/>
         <server name="MAIL_MAILER" value="array"/>
         <server name="QUEUE_CONNECTION" value="sync"/>
         <server name="SESSION_DRIVER" value="array"/>
