@@ -194,7 +194,7 @@ DB_DATABASE=laravel_test_db php artisan migrate:fresh
 ![Warning](https://img.shields.io/badge/Warning-Permission%20denied-red)
 
 Windows WSL環境では作成したテスト用のDBへの書き込み時にファイル権限のエラーが出る場合があります。
-"Permission denied"というエラーが発生した場合は、下記のコマンドを実行してテスト用DBDBのマイグレーションを再実行して下さい。
+"Permission denied"というエラーが発生した場合は、下記のコマンドを実行して権限を付与してからテスト用DBマイグレーションを再実行して下さい。
 
 MySQL コンテ上で
 ```bash
