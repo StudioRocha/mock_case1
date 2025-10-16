@@ -65,6 +65,7 @@ class EmailAuthController extends Controller
             }
             
             // デバッグ用：メール構造をログに出力
+            $this->ensureLogFilePermissions();
             Log::info('MailHog messages:', $messages);
             
             // 最新の認証メールを検索
@@ -294,6 +295,30 @@ class EmailAuthController extends Controller
         return redirect()->route('email.guide')->with('success', '認証メールを再送しました。');
     }
     
+    /**
+     * ログファイルの書き込み権限を確保
+     */
+    private function ensureLogFilePermissions()
+    {
+        $logPath = storage_path('logs');
+        $logFile = storage_path('logs/laravel.log');
+        
+        // logsディレクトリが存在しない場合は作成
+        if (!file_exists($logPath)) {
+            mkdir($logPath, 0777, true);
+            chmod($logPath, 0777);
+        }
+        
+        // ログファイルが存在しない場合は作成
+        if (!file_exists($logFile)) {
+            touch($logFile);
+            chmod($logFile, 0777);
+        } else {
+            // 既存のログファイルの権限を777に設定
+            chmod($logFile, 0777);
+        }
+    }
+
     /**
      * 新規登録時に認証メールを送信（認証コード方式）
      */
