@@ -28,7 +28,7 @@
 4. .env に以下の環境変数を設定、又は追加
    <BR>
 
-# <span style="color: red; font-size: 12px;">※応用要件の PhpUnit を用いたテストケースを実施する場合は STRIPE_PUBLIC_KEY/STRIPE_SECRET_KEY の値を自身の stripe アカウントのダッシュボードから取得して設定。</span>
+<span style="color: red; font-size: 12px;">※応用要件の PhpUnit を用いたテストケースを実施する場合は STRIPE_PUBLIC_KEY/STRIPE_SECRET_KEY の値を自身の stripe アカウントのダッシュボードから取得して設定。</span>
 
 ```text
 DB_CONNECTION=mysql
