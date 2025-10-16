@@ -25,10 +25,10 @@
 
 3. .env.example から .env を作成し、環境変数を設定
 
-
 4. .env に以下の環境変数を設定、又は追加
-<BR>
-# <span style="color: red; font-size: 12px;">※応用要件のPhpUnitを用いたテストケースを実施する場合は STRIPE_PUBLIC_KEY/STRIPE_SECRET_KEY の値を自身の stripe アカウントのダッシュボードから取得して設定。</span>
+   <BR>
+
+# <span style="color: red; font-size: 12px;">※応用要件の PhpUnit を用いたテストケースを実施する場合は STRIPE_PUBLIC_KEY/STRIPE_SECRET_KEY の値を自身の stripe アカウントのダッシュボードから取得して設定。</span>
 
 ```text
 DB_CONNECTION=mysql
@@ -190,21 +190,22 @@ php コンテナ上
 DB_DATABASE=laravel_test_db php artisan migrate:fresh
 ```
 
-テスト用マイグレーション実行時に Laravelのデータベースクエリ例外エラーが出た場合。<BR>
+テスト用マイグレーション実行時に Laravel のデータベースクエリ例外エラーが出た場合。<BR>
 ![Warning](https://img.shields.io/badge/Warning-Illuminate\Database\QueryException-red)
 
-Windows WSL環境では作成したテスト用のDBへの書き込み時にファイル権限のエラーが出る場合があります。
-"Permission denied"というエラーが発生した場合は、下記のコマンドを実行して権限を付与してからテスト用DBマイグレーションを再実行して下さい。
+Windows WSL 環境では作成したテスト用の DB への書き込み時にファイル権限のエラーが出る場合があります。
+"Permission denied"というエラーが発生した場合は、下記のコマンドを実行して権限を付与してからテスト用 DB マイグレーションを再実行して下さい。
 
 MySQL コンテ上で
+
 ```bash
 mysql -u root -p'root' -e 'GRANT ALL PRIVILEGES ON laravel_test_db.* TO "laravel_user"@"%"; FLUSH PRIVILEGES;'
 ```
 
-
 ### 機能テスト実行
 
 php コンテナ上
+
 ```bash
 php artisan test --testsuite=Feature
 
@@ -240,13 +241,14 @@ php artisan test --testsuite=Feature
 ## 使用技術(実行環境)
 
 -   php:8.1-fpm
--   Laravel 8.83.8
+-   Laravel 8.75
+-   Laravel Fortify (認証パッケージ)
 -   MySQL 8.0.26
 -   mailhog
 
 ## 外部サービス・API
 
-### Stripe 決済 API
+-   Stripe　18.0
 
 **決済処理**: Stripe Checkout API を使用
 
@@ -263,7 +265,7 @@ php artisan test --testsuite=Feature
 -   **設定ファイル**: `src/config/stripe.php`
 -   **サービスクラス**: `src/app/Services/StripeService.php`
 
-**注意**: `STRIPE_PUBLIC_KEY`と`STRIPE_SECRET_KEY`には、あなたの Stripe アカウントの実際の API キーを入力してください。
+**注意**: `STRIPE_PUBLIC_KEY`と`STRIPE_SECRET_KEY`にはStripe アカウントのAPI キーを入力してください。
 
 -   Stripe ダッシュボード → 開発者 → API キー から取得可能
 -   テスト環境では `pk_test_` と `sk_test_` で始まるキーを使用 -　　開発環境では　 webhook は未使用
@@ -279,13 +281,10 @@ php artisan test --testsuite=Feature
 
 -   **成功**: 4242 4242 4242 4242
 -   **失敗**: 4000 0000 0000 0002
--   **認証必要**: 4000 0025 0000 3155
 
 #### 実装詳細
 
 -   **モック化**: テスト時は StripeService をモック化
--   **エラーハンドリング**: ApiErrorException で例外処理
--   **メタデータ**: ユーザー ID、商品 ID、配送先住所を保存
 
 ## ER 図
 
