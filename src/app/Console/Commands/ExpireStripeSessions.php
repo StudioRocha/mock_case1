@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Models\Item;
-use Illuminate\Support\Facades\DB;
 
 class ExpireStripeSessions extends Command
 {

@@ -38,7 +38,9 @@ class ItemController extends Controller
                         ->from('item_likes')
                         ->whereColumn('item_likes.item_id', 'items.id')
                         ->where('item_likes.user_id', $userId);
-                });
+                })
+                // ユーザー自身が出品した商品はマイリストに表示しない
+                ->where('user_id', '!=', $userId);
             } else {
                 // 未ログイン時は空にする
                 $query->whereRaw('1=0');

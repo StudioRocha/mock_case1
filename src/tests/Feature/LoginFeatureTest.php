@@ -124,7 +124,7 @@ class LoginFeatureTest extends TestCase
 
         // 期待挙動: 正しいエラーメッセージが表示される
         $this->assertContains(
-            'メールアドレスまたはパスワードが正しくありません。',
+            'ログイン情報が登録されていません',
             session('errors')->get('email')
         );
     }

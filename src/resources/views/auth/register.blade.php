@@ -43,7 +43,9 @@
                 name="password"
             />
             @error('password')
-            <div class="p-form__error">{{ $message }}</div>
+                @if($message !== 'パスワードと一致しません')
+                <div class="p-form__error">{{ $message }}</div>
+                @endif
             @enderror
         </div>
         <div class="p-form__group">
@@ -58,6 +60,11 @@
             />
             @error('password_confirmation')
             <div class="p-form__error">{{ $message }}</div>
+            @enderror
+            @error('password')
+                @if($message === 'パスワードと一致しません')
+                <div class="p-form__error">{{ $message }}</div>
+                @endif
             @enderror
         </div>
         <button class="c-button c-button--primary p-form__submit" type="submit">

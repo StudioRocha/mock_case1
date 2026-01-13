@@ -35,20 +35,26 @@ class MyListFeatureTest extends TestCase
             'email_verified_at' => now(),
         ]);
 
+        // 他のユーザーを作成（出品者用）
+        $otherUser = User::factory()->create([
+            'email' => 'other@example.com',
+            'email_verified_at' => now(),
+        ]);
+
         $category = Category::create([
             'category_names' => 'ファッション',
         ]);
 
-        // いいねする商品を作成
+        // いいねする商品を作成（他のユーザーが出品）
         $likedItem = Item::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $otherUser->id,
             'is_sold' => false,
             'item_names' => 'いいねした商品',
         ]);
 
-        // いいねしない商品を作成
+        // いいねしない商品を作成（他のユーザーが出品）
         $notLikedItem = Item::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $otherUser->id,
             'is_sold' => false,
             'item_names' => 'いいねしていない商品',
         ]);
@@ -97,21 +103,27 @@ class MyListFeatureTest extends TestCase
             'email_verified_at' => now(),
         ]);
 
+        // 他のユーザーを作成（出品者用）
+        $otherUser = User::factory()->create([
+            'email' => 'other@example.com',
+            'email_verified_at' => now(),
+        ]);
+
         $category = Category::create([
             'category_names' => 'ファッション',
         ]);
 
-        // 販売中の商品を作成
+        // 販売中の商品を作成（他のユーザーが出品）
         $availableItem = Item::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $otherUser->id,
             'is_sold' => false,
             'item_names' => '販売中商品',
             'item_descriptions' => 'テスト商品の説明文です。',
         ]);
 
-        // 購入済み商品を作成（is_sold = true）
+        // 購入済み商品を作成（is_sold = true、他のユーザーが出品）
         $purchasedItem = Item::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $otherUser->id,
             'is_sold' => true,
             'item_names' => '購入済み商品',
             'item_descriptions' => 'テスト商品の説明文です。',

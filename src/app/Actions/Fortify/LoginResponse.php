@@ -2,7 +2,6 @@
 
 namespace App\Actions\Fortify;
 
-use Illuminate\Http\RedirectResponse;
 use Laravel\Fortify\Contracts\LoginResponse as LoginResponseContract;
 use Illuminate\Support\Facades\Auth;
 
