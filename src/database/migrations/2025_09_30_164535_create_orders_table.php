@@ -15,9 +15,13 @@ class CreateOrdersTable extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete(); // buyer
-            $table->unsignedInteger('total_amount')->default(0);
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('item_id')->constrained('items')->cascadeOnDelete();
+            $table->unsignedInteger('total_amount');
             $table->string('status', 32)->default('paid');
+            $table->string('payment_method', 50);
+            $table->text('shipping_address');
+            $table->text('comment')->nullable();
             $table->timestamps();
         });
     }

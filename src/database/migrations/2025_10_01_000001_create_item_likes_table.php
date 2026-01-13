@@ -6,6 +6,11 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateItemLikesTable extends Migration
 {
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
     public function up()
     {
         Schema::create('item_likes', function (Blueprint $table) {
@@ -13,14 +18,17 @@ class CreateItemLikesTable extends Migration
             $table->foreignId('item_id')->constrained('items')->cascadeOnDelete();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->timestamps();
-            $table->unique(['item_id','user_id']);
+            $table->unique(['item_id', 'user_id']);
         });
     }
 
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
     public function down()
     {
         Schema::dropIfExists('item_likes');
     }
 }
-
-

@@ -23,7 +23,6 @@ class CreateItemsTable extends Migration
             $table->unsignedInteger('like_counts')->default(0);
             $table->unsignedInteger('comment_counts')->default(0);
             $table->string('item_descriptions', 255);
-            $table->unsignedBigInteger('category_ids');
             $table->unsignedTinyInteger('conditions');
             $table->boolean('is_sold')->default(false);
             $table->timestamps();
