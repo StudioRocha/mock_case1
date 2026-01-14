@@ -56,7 +56,7 @@ AUTO_VERIFY_ENABLED=true
 # ===========================================
 # Stripe設定/応用要件
 # ===========================================
-# 開発環境ではwebhookは未使用のためSTRIPE_WEBHOOK_SECRETの値はそのまま。
+# 開発環境ではwebhookは未使用のためSTRIPE_WEBHOOK_SECRETの値はそのままです。
 
 STRIPE_PUBLIC_KEY=pk_test_your_publishable_key_here
 STRIPE_SECRET_KEY=sk_test_your_secret_key_here
