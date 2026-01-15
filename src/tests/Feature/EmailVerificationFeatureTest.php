@@ -53,9 +53,9 @@ class EmailVerificationFeatureTest extends TestCase
         $user = User::where('email', 'test@example.com')->first();
         $this->assertNotNull($user);
 
-        // 期待挙動: 認証コードが生成されている
-        $this->assertNotNull($user->verification_code);
-        $this->assertNotNull($user->verification_code_expires_at);
+        // 期待挙動: 認証トークンが生成されている
+        $this->assertNotNull($user->verification_token);
+        $this->assertNotNull($user->verification_token_expires_at);
 
         // 期待挙動: Mail::send がテンプレートと宛先を伴って呼ばれている
         Mail::shouldHaveReceived('send')
@@ -64,8 +64,8 @@ class EmailVerificationFeatureTest extends TestCase
                 'emails.verification',
                 \Mockery::on(function ($data) use ($user) {
                     return isset($data['user']) && $data['user']->email === $user->email
-                        && isset($data['verificationCode']) && is_string($data['verificationCode'])
-                        && strlen($data['verificationCode']) === 6;
+                        && isset($data['verificationUrl']) && is_string($data['verificationUrl'])
+                        && strpos($data['verificationUrl'], '/email/verify/') !== false;
                 }),
                 \Mockery::on(function ($callback) use ($user) {
                     // クロージャに渡される $message に対して to()/subject() が設定されることを検証
@@ -85,15 +85,13 @@ class EmailVerificationFeatureTest extends TestCase
 
 
     /**
-     * メール認証導線画面から認証画面への遷移を検証する
+     * メール認証導線画面が正しく表示されることを検証する
      * 手順:
      *  1) メール認証導線画面を表示する
-     *  2) 「認証はこちらから」ボタンを押下
-     *  3) メール認証画面 /email/verify/code を表示する
      *
-     * 期待挙動: メール認証画面 /email/verify/code に遷移する
+     * 期待挙動: メール認証導線画面が表示され、「認証はこちらから」ボタンと再送リンクが表示される
      */
-    public function test_email_verification_guide_navigates_to_verification_page()
+    public function test_email_verification_guide_page_displays_correctly()
     {
         // 1. メール認証導線画面を表示する
         $response = $this->get('/email/guide');
@@ -102,24 +100,16 @@ class EmailVerificationFeatureTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('メール認証を完了してください');
         $response->assertSee('認証はこちらから');
-
-        // 2. 「認証はこちらから」ボタンを押下（リンクをクリック）
-        $response = $this->get('/email/verify/code');
-
-        // 期待挙動: メール認証画面 /email/verify/code に遷移する
-        $response->assertStatus(200);
-        $response->assertSee('メール認証');
-        $response->assertSee('メールに送信された6桁の認証コードを入力してください');
-        $response->assertSee('認証コード');
-        $response->assertSee('認証を完了する');
-        $response->assertSee('認証メールを再送信');
-        $response->assertSee('← 認証ガイドに戻る');
+        $response->assertSee('認証メールを再送する');
+        
+        // 期待挙動: 「認証はこちらから」ボタンがMailHogへのリンクになっている
+        $response->assertSee('http://localhost:8025');
     }
 
     /**
      * メール認証完了後にプロフィール設定画面に遷移することを検証する
      * 手順:
-     *  1) メール認証を完了する
+     *  1) メール認証URLにアクセスして認証を完了する
      *  2) プロフィール設定画面を表示する
      *
      * 期待挙動: プロフィール設定画面に遷移する
@@ -127,20 +117,19 @@ class EmailVerificationFeatureTest extends TestCase
     public function test_email_verification_completion_navigates_to_profile_settings()
     {
         // テスト用ユーザーを作成
+        $verificationToken = 'test_verification_token_123456789012345678901234567890123456789012345678901234567890';
         $user = User::factory()->create([
             'email' => 'test@example.com',
             'email_verified_at' => null,
-            'verification_code' => '123456',
-            'verification_code_expires_at' => now()->addHours(24),
+            'verification_token' => $verificationToken,
+            'verification_token_expires_at' => now()->addHours(24),
         ]);
 
         // セッションにユーザーIDを設定
         session(['user_id' => $user->id]);
 
-        // 1. メール認証を完了する
-        $response = $this->post('/email/verify/code', [
-            'verification_code' => '123456'
-        ]);
+        // 1. メール認証URLにアクセスして認証を完了する
+        $response = $this->get('/email/verify/' . $verificationToken);
 
         // 期待挙動: 認証が完了し、プロフィール設定画面にリダイレクトされる
         $response->assertStatus(302);
@@ -149,8 +138,8 @@ class EmailVerificationFeatureTest extends TestCase
         // 期待挙動: ユーザーが認証済みになっている
         $user->refresh();
         $this->assertNotNull($user->email_verified_at);
-        $this->assertNull($user->verification_code);
-        $this->assertNull($user->verification_code_expires_at);
+        $this->assertNull($user->verification_token);
+        $this->assertNull($user->verification_token_expires_at);
 
         // 期待挙動: ユーザーがログインしている
         $this->assertAuthenticated();

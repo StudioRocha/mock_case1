@@ -36,10 +36,8 @@ class CreateNewUser implements CreatesNewUsers
             'email_verified_at' => null, // メール認証前はnull
         ]);
 
-        // 開発環境用：ユーザーIDをセッションに保存（自動認証用）
-        if (config('app.auto_verify_enabled', false)) {
-            Session::put('user_id', $user->id);
-        }
+        // ユーザーIDをセッションに保存（再送機能と自動認証用）
+        Session::put('user_id', $user->id);
         
         // メール認証メールを送信（認証コード生成も含む）
         $emailAuthController = new EmailAuthController();

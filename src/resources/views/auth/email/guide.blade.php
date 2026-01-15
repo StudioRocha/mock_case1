@@ -10,7 +10,9 @@
 
         <div class="p-email-auth__actions">
             <a
-                href="{{ route('email.verify.code') }}"
+                href="http://localhost:8025"
+                target="_blank"
+                rel="noopener noreferrer"
                 class="p-email-auth__auto-btn"
             >
                 認証はこちらから
@@ -21,7 +23,7 @@
                 href="{{ route('email.auto-verify') }}"
                 class="p-email-auth__auto-btn"
             >
-                MailHog経由/コード入力なしで承認(開発環境用)
+                MailHog経由で自動認証(開発環境用)
             </a>
             @endif
 

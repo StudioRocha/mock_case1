@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\EmailVerificationRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -10,6 +9,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Str;
 
 class EmailAuthController extends Controller
 {
@@ -123,29 +123,29 @@ class EmailAuthController extends Controller
                 return redirect()->route('email.guide')->with('error', '認証メールがMailHogに見つかりません。ユーザー: ' . $user->email);
             }
             
-            // メール内容から認証コードを抽出
+            // メール内容から認証URLを抽出
             $emailContent = $verificationMessage['Content']['Body'];
-            $verificationCode = $this->extractVerificationCode($emailContent);
+            $verificationToken = $this->extractVerificationToken($emailContent);
             
-            if (!$verificationCode) {
-                return redirect()->route('email.guide')->with('error', '認証コードを抽出できませんでした。');
+            if (!$verificationToken) {
+                return redirect()->route('email.guide')->with('error', '認証URLを抽出できませんでした。');
             }
             
-            // 認証コードの検証
-            if ($user->verification_code !== $verificationCode) {
-                return redirect()->route('email.guide')->with('error', 'MailHogから取得した認証コードが一致しません。');
+            // トークンの検証
+            if ($user->verification_token !== $verificationToken) {
+                return redirect()->route('email.guide')->with('error', 'MailHogから取得した認証トークンが一致しません。');
             }
             
             // 有効期限チェック
-            if ($user->verification_code_expires_at && $user->verification_code_expires_at < now()) {
-                return redirect()->route('email.guide')->with('error', '認証コードの有効期限が切れています。');
+            if ($user->verification_token_expires_at && $user->verification_token_expires_at < now()) {
+                return redirect()->route('email.guide')->with('error', '認証トークンの有効期限が切れています。');
             }
             
             // メール認証完了
             $user->update([
                 'email_verified_at' => now(),
-                'verification_code' => null, // コードを無効化
-                'verification_code_expires_at' => null,
+                'verification_token' => null, // トークンを無効化
+                'verification_token_expires_at' => null,
             ]);
             
             // セッションからuser_idを削除
@@ -177,15 +177,20 @@ class EmailAuthController extends Controller
     }
     
     /**
-     * メール内容から認証コードを抽出
+     * メール内容から認証トークンを抽出
      */
-    private function extractVerificationCode($emailContent)
+    private function extractVerificationToken($emailContent)
     {
         // HTMLメールの場合、HTMLタグを除去
         $textContent = strip_tags($emailContent);
         
-        // 6桁の数字を検索
-        if (preg_match('/\b(\d{6})\b/', $textContent, $matches)) {
+        // 認証URLからトークンを抽出
+        // パターン: /email/verify/{token} または ?token=xxx
+        if (preg_match('/\/email\/verify\/([a-zA-Z0-9]+)/', $textContent, $matches)) {
+            return $matches[1];
+        }
+        
+        if (preg_match('/[?&]token=([a-zA-Z0-9]+)/', $textContent, $matches)) {
             return $matches[1];
         }
         
@@ -193,35 +198,15 @@ class EmailAuthController extends Controller
     }
 
     /**
-     * 認証コード入力画面を表示
+     * 認証URLから認証を完了
      */
-    public function showCodeVerificationPage()
+    public function verify(Request $request, $token)
     {
-        return view('auth.email.verify-code');
-    }
-
-    /**
-     * 認証コードを検証して認証を完了
-     */
-    public function verifyCode(Request $request)
-    {
-        $request->validate([
-            'verification_code' => 'required|string|size:6'
-        ]);
-
-        $code = $request->input('verification_code');
-        
-        // セッションから最新のユーザーIDを取得
-        $userId = Session::get('user_id');
-        
-        if (!$userId) {
-            return redirect()->route('email.guide')->with('error', '認証セッションが見つかりません。再度登録してください。');
-        }
-        
-        $user = User::find($userId);
+        // トークンからユーザーを検索
+        $user = User::where('verification_token', $token)->first();
         
         if (!$user) {
-            return redirect()->route('email.guide')->with('error', 'ユーザーが見つかりません。');
+            return redirect()->route('email.guide')->with('error', '無効な認証リンクです。');
         }
         
         // 既に認証済みかチェック
@@ -230,21 +215,16 @@ class EmailAuthController extends Controller
             return redirect()->route('profile.edit')->with('success', '既にメール認証が完了しています。');
         }
         
-        // 認証コードの検証
-        if (!$user->verification_code || $user->verification_code !== $code) {
-            return back()->withErrors(['verification_code' => '認証コードが正しくありません。']);
-        }
-        
         // 有効期限チェック
-        if ($user->verification_code_expires_at && $user->verification_code_expires_at < now()) {
-            return back()->withErrors(['verification_code' => '認証コードの有効期限が切れています。']);
+        if ($user->verification_token_expires_at && $user->verification_token_expires_at < now()) {
+            return redirect()->route('email.guide')->with('error', '認証リンクの有効期限が切れています。認証メールを再送してください。');
         }
         
         // メール認証完了
         $user->update([
             'email_verified_at' => now(),
-            'verification_code' => null, // コードを無効化
-            'verification_code_expires_at' => null,
+            'verification_token' => null, // トークンを無効化
+            'verification_token_expires_at' => null,
         ]);
         
         // セッションからuser_idを削除
@@ -280,13 +260,13 @@ class EmailAuthController extends Controller
             return redirect()->route('profile.edit')->with('success', '既にメール認証が完了しています。');
         }
         
-        // 新しい認証コードを生成
-        $verificationCode = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        // 新しい認証トークンを生成
+        $verificationToken = Str::random(60);
         $expiresAt = now()->addHours(24);
         
         $user->update([
-            'verification_code' => $verificationCode,
-            'verification_code_expires_at' => $expiresAt,
+            'verification_token' => $verificationToken,
+            'verification_token_expires_at' => $expiresAt,
         ]);
         
         // メール送信
@@ -320,23 +300,26 @@ class EmailAuthController extends Controller
     }
 
     /**
-     * 新規登録時に認証メールを送信（認証コード方式）
+     * 新規登録時に認証メールを送信（URL認証方式）
      */
     public function sendVerificationEmail(User $user)
     {
-        // 認証コードを生成
-        $verificationCode = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        // 認証トークンを生成
+        $verificationToken = Str::random(60);
         $expiresAt = now()->addHours(24);
         
         $user->update([
-            'verification_code' => $verificationCode,
-            'verification_code_expires_at' => $expiresAt,
+            'verification_token' => $verificationToken,
+            'verification_token_expires_at' => $expiresAt,
         ]);
+        
+        // 認証URLを生成
+        $verificationUrl = route('email.verify', ['token' => $verificationToken]);
         
         // メール送信
         Mail::send('emails.verification', [
             'user' => $user,
-            'verificationCode' => $verificationCode
+            'verificationUrl' => $verificationUrl
         ], function ($message) use ($user) {
             $message->to($user->email)
                    ->subject('メール認証を完了してください');

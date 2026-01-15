@@ -11,29 +11,29 @@
 
         <p>ご登録いただき、ありがとうございます。</p>
 
-        <p>以下の認証コードを入力してメール認証を完了してください：</p>
+        <p>以下のボタンをクリックしてメール認証を完了してください：</p>
 
         <div style="text-align: center; margin: 30px 0">
-            <div
+            <a
+                href="{{ $verificationUrl }}"
                 style="
-                    background-color: #f5f5f5;
-                    padding: 20px;
-                    font-size: 32px;
-                    font-weight: bold;
-                    letter-spacing: 8px;
-                    border: 2px solid #007bff;
-                    border-radius: 8px;
                     display: inline-block;
-                    font-family: monospace;
+                    padding: 15px 30px;
+                    background-color: #007bff;
+                    color: #ffffff;
+                    text-decoration: none;
+                    border-radius: 5px;
+                    font-weight: bold;
+                    font-size: 16px;
                 "
             >
-                {{ $verificationCode }}
-            </div>
+                メール認証を完了する
+            </a>
         </div>
 
-        <p>認証コードの有効期限は24時間です。</p>
+        <p>認証リンクの有効期限は24時間です。</p>
 
-        <p>認証コード入力画面は以下のURLからアクセスできます：</p>
+        <p>ボタンがクリックできない場合は、以下のURLをコピーしてブラウザに貼り付けてください：</p>
 
         <div
             style="
@@ -44,9 +44,7 @@
                 margin: 20px 0;
             "
         >
-            <a href="{{ route('email.verify.code') }}">{{
-                route("email.verify.code")
-            }}</a>
+            <a href="{{ $verificationUrl }}">{{ $verificationUrl }}</a>
         </div>
 
         <p>

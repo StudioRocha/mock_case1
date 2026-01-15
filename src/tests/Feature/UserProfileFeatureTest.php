@@ -88,6 +88,7 @@ class UserProfileFeatureTest extends TestCase
         Order::create([
             'user_id' => $user->id,
             'item_id' => $purchasedItem->id,
+            'total_amount' => $purchasedItem->item_prices,
             'payment_method' => 'credit_card',
             'shipping_address' => '東京都渋谷区恵比寿2-2-2',
         ]);

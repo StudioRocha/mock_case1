@@ -196,7 +196,7 @@ DB_DATABASE=laravel_test_db php artisan migrate:fresh
 Windows WSL 環境では作成したテスト用の DB への書き込み時にファイル権限のエラーが出る場合があります。
 "Permission denied"というエラーが発生した場合は、下記のコマンドを実行して権限を付与してからテスト用 DB マイグレーションを再実行して下さい。
 
-MySQL コンテ上で    
+MySQL コンテ上で
 
 ```bash
 mysql -u root -p'root' -e 'GRANT ALL PRIVILEGES ON laravel_test_db.* TO "laravel_user"@"%"; FLUSH PRIVILEGES;'
@@ -204,7 +204,7 @@ mysql -u root -p'root' -e 'GRANT ALL PRIVILEGES ON laravel_test_db.* TO "laravel
 
 ### 機能テスト実行
 
-php コンテナ上で 
+php コンテナ上で
 
 ```bash
 php artisan test --testsuite=Feature
@@ -248,7 +248,7 @@ php artisan test --testsuite=Feature
 
 ## 外部サービス・API
 
--   Stripe　18.0
+-   Stripe 　 18.0
 
 **決済処理**: Stripe Checkout API を使用
 
@@ -265,7 +265,7 @@ php artisan test --testsuite=Feature
 -   **設定ファイル**: `src/config/stripe.php`
 -   **サービスクラス**: `src/app/Services/StripeService.php`
 
-**注意**: `STRIPE_PUBLIC_KEY`と`STRIPE_SECRET_KEY`にはStripe アカウントのAPI キーを入力してください。
+**注意**: `STRIPE_PUBLIC_KEY`と`STRIPE_SECRET_KEY`には Stripe アカウントの API キーを入力してください。
 
 -   Stripe ダッシュボード → 開発者 → API キー から取得可能
 -   テスト環境では `pk_test_` と `sk_test_` で始まるキーを使用 -　　開発環境では　 webhook は未使用
@@ -279,8 +279,31 @@ php artisan test --testsuite=Feature
 
 #### テスト用カード情報
 
--   **成功**: 4242 4242 4242 4242
--   **失敗**: 4000 0000 0000 0002
+Stripe のテストモードでは、以下のテストカード番号を使用できます。
+
+**成功する決済（正常系）**
+
+| カード番号          | ブランド         | CVC                     | 有効期限                | 説明                 |
+| ------------------- | ---------------- | ----------------------- | ----------------------- | -------------------- |
+| 4242 4242 4242 4242 | Visa             | 任意の 3 桁（例: 123）  | 未来の日付（例: 12/25） | 正常に決済が完了する |
+| 5555 5555 5555 4444 | Mastercard       | 任意の 3 桁（例: 123）  | 未来の日付（例: 12/25） | 正常に決済が完了する |
+| 3782 822463 10005   | American Express | 任意の 4 桁（例: 1234） | 未来の日付（例: 12/25） | 正常に決済が完了する |
+
+**失敗する決済（異常系）**
+
+| カード番号          | ブランド | CVC                    | 有効期限                | 説明                 |
+| ------------------- | -------- | ---------------------- | ----------------------- | -------------------- |
+| 4000 0000 0000 0002 | Visa     | 任意の 3 桁（例: 123） | 未来の日付（例: 12/25） | カードが拒否される   |
+| 4000 0000 0000 9995 | Visa     | 任意の 3 桁（例: 123） | 未来の日付（例: 12/25） | 資金不足で拒否される |
+
+**注意事項**
+
+-   **CVC（セキュリティコード）**: テストモードでは任意の有効な値を使用できます
+    -   Visa、Mastercard など: 任意の 3 桁の数字（例: `123`, `456`, `999`）
+    -   American Express: 任意の 4 桁の数字（例: `1234`, `5678`）
+-   **有効期限**: 未来の日付であれば任意の値で問題ありません（例: `12/25`, `01/30`）
+-   **郵便番号**: 任意の値で問題ありません（例: `123-4567`, `000-0000`）
+-   これらのカード番号は**テストモードでのみ**使用可能です。本番環境では使用できません。
 
 #### 実装詳細
 
