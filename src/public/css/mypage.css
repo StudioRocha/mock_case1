@@ -17,6 +17,7 @@
 .p-mypage__name {
     font-size: 30px;
     font-weight: 700;
+    margin-left: 40px;
 }
 .p-mypage__tabs {
     justify-content: flex-start;
