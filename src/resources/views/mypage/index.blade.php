@@ -9,8 +9,17 @@
                 style="@if(optional($user->profile)->avatar_paths) background-image:url('{{ asset('storage/'. $user->profile->avatar_paths) }}') @endif"
             ></div>
         </div>
-        <div class="p-mypage__name">
-            {{ optional($user->profile)->usernames ?? $user->name }}
+        <div class="p-mypage__user-info">
+            <div class="p-mypage__name">
+                {{ optional($user->profile)->usernames ?? $user->name }}
+            </div>
+            @if($averageRating)
+            <div class="p-mypage__rating">
+                @for($i = 1; $i <= 5; $i++)
+                    <span class="p-mypage__star {{ $i <= $averageRating ? 'p-mypage__star--filled' : '' }}">★</span>
+                @endfor
+            </div>
+            @endif
         </div>
         <a href="/mypage/profile" class="c-button c-button--outline-danger"
             >プロフィールを編集</a
@@ -31,6 +40,17 @@
                 $activeTab === 'buy' ? 'p-tabs__tab--active' : ''
             }}"
             >購入した商品</a
+        >
+        <a
+            href="{{ url('/mypage?page=trading') }}"
+            class="p-tabs__tab {{
+                $activeTab === 'trading' ? 'p-tabs__tab--active' : ''
+            }}"
+            >取引中の商品
+            @if($unreadMessageCount > 0)
+            <span class="p-tabs__badge">{{ $unreadMessageCount }}</span>
+            @endif
+            </a
         >
     </div>
 
@@ -59,7 +79,7 @@
     </div>
     @if($listedItems->count())
     <div class="p-pagination">{{ $listedItems->links() }}</div>
-    @endif @else
+    @endif @elseif($activeTab === 'buy')
     <div class="p-grid">
         @forelse($purchasedItems as $item)
         <a class="c-card" href="/item/{{ $item->id }}">
@@ -80,6 +100,34 @@
         </a>
         @empty
         <div class="p-empty">購入した商品はありません。</div>
+        @endforelse
+    </div>
+    @elseif($activeTab === 'trading')
+    <div class="p-grid">
+        @forelse($tradingOrders as $order)
+        <a class="c-card" href="/chat/{{ $order->item_id }}">
+            <div class="c-card__thumb">
+                @php
+                    $item = $order->item;
+                    $itemUnreadCount = $itemUnreadCounts[$item->id] ?? 0;
+                @endphp
+                @if($itemUnreadCount > 0)
+                <span class="c-card__notification">{{ $itemUnreadCount }}</span>
+                @endif
+                @if($item->item_image_paths)
+                <img
+                    class="c-card__img"
+                    src="{{ asset(Str::startsWith($item->item_image_paths, 'http') ? $item->item_image_paths : (Str::startsWith($item->item_image_paths, 'images/') ? $item->item_image_paths : 'storage/'.$item->item_image_paths)) }}"
+                    alt="{{ $item->item_names }}"
+                />
+                @else
+                <div class="c-card__img c-card__img--placeholder">商品画像</div>
+                @endif
+            </div>
+            <div class="c-card__name">{{ $item->item_names }}</div>
+        </a>
+        @empty
+        <div class="p-empty">取引中の商品はありません。</div>
         @endforelse
     </div>
     @endif

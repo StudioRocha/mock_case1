@@ -151,7 +151,8 @@ class ItemController extends Controller
                 'total_amount' => $item->item_prices,
                 'payment_method' => $request->payment_method,
                 'shipping_address' => $request->shipping_address,
-                'status' => 'paid',
+                'payment_status' => Order::PAYMENT_STATUS_PAID,
+                'trade_status' => Order::TRADE_STATUS_TRADING,
             ]);
             
             // 商品を売却済みにマーク

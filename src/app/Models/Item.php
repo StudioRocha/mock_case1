@@ -47,6 +47,11 @@ class Item extends Model
         return $this->hasMany(Order::class);
     }
 
+    public function messages()
+    {
+        return $this->hasMany(Message::class);
+    }
+
     public function isLikedBy(?int $userId): bool
     {
         if (!$userId) return false;

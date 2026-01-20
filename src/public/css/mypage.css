@@ -14,10 +14,27 @@
 .p-mypage__header .c-button--outline-danger {
     margin-left: auto;
 }
+.p-mypage__user-info {
+    margin-left: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
 .p-mypage__name {
     font-size: 30px;
     font-weight: 700;
-    margin-left: 40px;
+}
+.p-mypage__rating {
+    display: flex;
+    gap: 2px;
+}
+.p-mypage__star {
+    color: #d3d3d3;
+    font-size: 24px;
+    line-height: 1;
+}
+.p-mypage__star--filled {
+    color: #ffd700;
 }
 .p-mypage__tabs {
     justify-content: flex-start;
@@ -26,4 +43,44 @@
 .p-tabs.p-mypage__tabs,
 .p-mypage__tabs .p-tabs {
     padding-left: clamp(12px, 6vw, 60px);
+}
+.p-tabs__tab {
+    position: relative;
+}
+.p-tabs__badge {
+    position: absolute;
+    top: -8px;
+    right: -12px;
+    background-color: #dc3545;
+    color: #fff;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 1;
+}
+.c-card__thumb {
+    position: relative;
+}
+.c-card__notification {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background-color: #dc3545;
+    color: #fff;
+    border-radius: 50%;
+    min-width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 1;
+    padding: 0 6px;
+    z-index: 1;
 }

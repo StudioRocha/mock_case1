@@ -89,6 +89,7 @@ class UserProfileFeatureTest extends TestCase
             'user_id' => $user->id,
             'item_id' => $purchasedItem->id,
             'total_amount' => $purchasedItem->item_prices,
+            'payment_status' => Order::PAYMENT_STATUS_PAID,
             'payment_method' => 'credit_card',
             'shipping_address' => '東京都渋谷区恵比寿2-2-2',
         ]);

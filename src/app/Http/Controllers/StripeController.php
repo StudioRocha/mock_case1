@@ -51,7 +51,8 @@ class StripeController extends Controller
                         'total_amount' => $item->item_prices,
                         'payment_method' => 'convenience_store',
                         'shipping_address' => $request->shipping_address,
-                        'status' => 'payment_pending', // 支払い待ち
+                        'payment_status' => Order::PAYMENT_STATUS_PAYMENT_PENDING,
+                        'trade_status' => Order::TRADE_STATUS_TRADING,
                     ]);
                 });
             }
@@ -108,7 +109,8 @@ class StripeController extends Controller
                         'total_amount' => $item->item_prices,
                         'payment_method' => $session->payment_method_types[0],
                         'shipping_address' => $session->metadata->shipping_address,
-                        'status' => 'paid',
+                        'payment_status' => Order::PAYMENT_STATUS_PAID,
+                        'trade_status' => Order::TRADE_STATUS_TRADING,
                     ]);
                     
                     // 商品を売却済みにマーク

@@ -18,7 +18,8 @@ class CreateOrdersTable extends Migration
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('item_id')->constrained('items')->cascadeOnDelete();
             $table->unsignedInteger('total_amount');
-            $table->string('status', 32)->default('paid');
+            $table->string('payment_status', 32)->default('paid');
+            $table->string('trade_status', 32)->nullable();
             $table->string('payment_method', 50);
             $table->text('shipping_address');
             $table->text('comment')->nullable();

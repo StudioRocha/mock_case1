@@ -11,81 +11,60 @@ class UserSeeder extends Seeder
 {
     public function run()
     {
-        // 環境変数でcountが指定されている場合は、createUsersメソッドを呼び出し
-        $count = env('USER_COUNT');
-        if ($count) {
-            $this->createUsers((int)$count);
-            return;
-        }
-
-        // 通常のSeeder実行（固定ユーザー1人 + ランダムユーザー10人）
-        // テスト用の固定ユーザーを作成
-        $fixedUser = User::firstOrCreate(
-            ['email' => 'dev@example.com'],
+        // 3人のダミーユーザーを作成
+        $usersData = [
             [
-                'name' => 'Developer',
-                'password' => Hash::make('password'),
-                'email_verified_at' => now(),
-            ]
-        );
-
-        // 固定ユーザーのプロフィールを作成（存在しない場合のみ）
-        Profile::firstOrCreate(
-            ['user_id' => $fixedUser->id],
+                'name' => '田中 太郎',
+                'email' => 'tanaka@example.com',
+                'usernames' => '田中 太郎',
+                'postal_codes' => '100-0001',
+                'addresses' => '東京都千代田区千代田1-1',
+                'building_names' => 'テストマンション 101',
+            ],
             [
-                'user_id' => $fixedUser->id,
-                'postal_codes' => '123-4567',
-                'addresses' => '東京都渋谷区',
-                'building_names' => 'テストビル 101',
-                'usernames' => 'Developer',
-                'avatar_paths' => null,
-            ]
-        );
+                'name' => '佐藤 花子',
+                'email' => 'sato@example.com',
+                'usernames' => '佐藤 花子',
+                'postal_codes' => '150-0001',
+                'addresses' => '東京都渋谷区神宮前1-1',
+                'building_names' => 'テストアパート 201',
+            ],
+            [
+                'name' => '鈴木 一郎',
+                'email' => 'suzuki@example.com',
+                'usernames' => '鈴木 一郎',
+                'postal_codes' => '530-0001',
+                'addresses' => '大阪府大阪市北区梅田1-1',
+                'building_names' => 'テストビル 301',
+            ],
+        ];
 
-        // ダミーユーザーを10人作成（既存のユーザー数をチェック）
-        $existingUserCount = User::count();
-        if ($existingUserCount < 11) { // 固定ユーザー1人 + ランダムユーザー10人 = 11人
-            $neededUsers = 11 - $existingUserCount;
-            
-            // ユーザーとプロフィールを同時に作成
-            for ($i = 0; $i < $neededUsers; $i++) {
-                $user = User::factory()->create();
-                Profile::factory()->create(['user_id' => $user->id]);
-            }
-            
-            $this->command->info("追加で{$neededUsers}人のユーザーとプロフィールを作成しました。");
-        } else {
-            $this->command->info('既に十分なユーザーが存在します。');
+        foreach ($usersData as $userData) {
+            $user = User::firstOrCreate(
+                ['email' => $userData['email']],
+                [
+                    'name' => $userData['name'],
+                    'password' => Hash::make('password'),
+                    'email_verified_at' => now(),
+                ]
+            );
+
+            // プロフィールを作成
+            Profile::firstOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'user_id' => $user->id,
+                    'usernames' => $userData['usernames'],
+                    'postal_codes' => $userData['postal_codes'],
+                    'addresses' => $userData['addresses'],
+                    'building_names' => $userData['building_names'],
+                    'avatar_paths' => null,
+                ]
+            );
+
+            $this->command->info("ユーザー「{$userData['name']}」を作成しました。");
         }
 
-        $this->command->info('ユーザーダミーデータを作成しました。');
-        $this->command->info('固定ユーザー1人 + ランダムユーザー10人 = 合計11人のユーザーを作成しました。');
-    }
-
-    /**
-     * 指定した人数のユーザーを作成するメソッド
-     * 使用方法: USER_COUNT=5 php artisan db:seed --class=UserSeeder
-     */
-    public function createUsers($count = 10)
-    {
-        $this->command->info("=== ユーザー作成開始 ===");
-        $this->command->info("作成予定人数: {$count}人");
-
-        // 既存のユーザー数をチェック
-        $existingCount = User::count();
-        $this->command->info("既存ユーザー数: {$existingCount}人");
-
-        // 指定した人数のユーザーとプロフィールを作成
-        for ($i = 0; $i < $count; $i++) {
-            $user = User::factory()->create();
-            Profile::factory()->create(['user_id' => $user->id]);
-        }
-
-        $newCount = User::count();
-        $createdCount = $newCount - $existingCount;
-        
-        $this->command->info("新規作成: {$createdCount}人");
-        $this->command->info("現在の総ユーザー数: {$newCount}人");
-        $this->command->info("=== ユーザー作成完了 ===");
+        $this->command->info('ユーザーダミーデータ3人を作成しました。');
     }
 }

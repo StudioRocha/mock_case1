@@ -66,7 +66,7 @@
             </div>
             @elseif($item->is_sold)
             <div class="p-detail__buy">
-                @php($hasOrder = $item->orders()->where('status',
+                @php($hasOrder = $item->orders()->where('payment_status',
                 'paid')->exists()) @if($hasOrder)
                 <button
                     class="c-button c-button--primary p-detail__buy-btn p-detail__buy-btn--disabled"

@@ -9,8 +9,16 @@ class Order extends Model
 {
     use HasFactory;
 
+    // 支払い状態
+    public const PAYMENT_STATUS_PAID = 'paid';
+    public const PAYMENT_STATUS_PAYMENT_PENDING = 'payment_pending';
+
+    // 取引状態
+    public const TRADE_STATUS_TRADING = 'trading';
+    public const TRADE_STATUS_COMPLETED = 'completed';
+
     protected $fillable = [
-        'user_id', 'item_id', 'total_amount', 'status', 'payment_method', 'shipping_address', 'comment',
+        'user_id', 'item_id', 'total_amount', 'payment_status', 'trade_status', 'payment_method', 'shipping_address', 'comment',
     ];
 
     public function user()
@@ -21,6 +29,11 @@ class Order extends Model
     public function item()
     {
         return $this->belongsTo(Item::class);
+    }
+
+    public function rating()
+    {
+        return $this->hasOne(Rating::class);
     }
 }
 

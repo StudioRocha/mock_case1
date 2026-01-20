@@ -228,7 +228,7 @@ class ItemPurchaseFeatureTest extends TestCase
             'total_amount' => $item->item_prices,
             'payment_method' => 'card',
             'shipping_address' => 'テスト住所',
-            'status' => 'paid',
+            'payment_status' => 'paid',
         ]);
 
         // 商品を売却済みにマーク
@@ -248,7 +248,7 @@ class ItemPurchaseFeatureTest extends TestCase
         $this->assertDatabaseHas('orders', [
             'user_id' => $user->id,
             'item_id' => $item->id,
-            'status' => 'paid',
+            'payment_status' => 'paid',
         ]);
 
         // 期待挙動: 商品が売却済みになっている
@@ -334,7 +334,7 @@ class ItemPurchaseFeatureTest extends TestCase
             'total_amount' => $item->item_prices,
             'payment_method' => 'card',
             'shipping_address' => 'テスト住所',
-            'status' => 'paid',
+            'payment_status' => 'paid',
         ]);
 
         // 商品を売却済みにマーク
@@ -354,7 +354,7 @@ class ItemPurchaseFeatureTest extends TestCase
         $this->assertDatabaseHas('orders', [
             'user_id' => $user->id,
             'item_id' => $item->id,
-            'status' => 'paid',
+            'payment_status' => 'paid',
         ]);
 
         // 期待挙動: 商品が売却済みになっている
