@@ -36,7 +36,7 @@ class RatingSeeder extends Seeder
             return;
         }
 
-        // 佐藤花子が田中太郎の商品を購入したOrderを作成（取引完了済み）
+        // 佐藤花子が田中太郎の商品を購入したOrderを作成（取引中）
         $order = Order::firstOrCreate(
             [
                 'user_id' => $sato->id,
@@ -47,7 +47,7 @@ class RatingSeeder extends Seeder
                 'item_id' => $tanakaItem->id,
                 'total_amount' => $tanakaItem->item_prices,
                 'payment_status' => Order::PAYMENT_STATUS_PAID,
-                'trade_status' => Order::TRADE_STATUS_COMPLETED,
+                'trade_status' => Order::TRADE_STATUS_TRADING,
                 'payment_method' => 'credit_card',
                 'shipping_address' => '東京都渋谷区神宮前1-1 テストアパート 201',
             ]
