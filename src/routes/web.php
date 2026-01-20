@@ -48,6 +48,14 @@ Route::middleware(['auth', 'block.unverified'])->group(function () {
     Route::post('/item/{item}/comment', [\App\Http\Controllers\ItemController::class, 'comment'])->name('items.comment');
     Route::post('/item/{item}/like', [\App\Http\Controllers\ItemController::class, 'like'])->name('items.like');
     Route::get('/item/{item}/payment-status', [\App\Http\Controllers\ItemController::class, 'paymentStatus'])->name('items.payment.status');
+    
+    // 取引チャット
+    Route::get('/chat/{item}', [\App\Http\Controllers\ChatController::class, 'index'])->name('chat.index');
+    Route::post('/chat/{item}', [\App\Http\Controllers\ChatController::class, 'store'])->name('chat.store');
+    Route::put('/chat/{item}/message/{message}', [\App\Http\Controllers\ChatController::class, 'update'])->name('chat.update');
+    Route::delete('/chat/{item}/message/{message}', [\App\Http\Controllers\ChatController::class, 'destroy'])->name('chat.destroy');
+    Route::post('/chat/{item}/complete', [\App\Http\Controllers\ChatController::class, 'complete'])->name('chat.complete');
+    Route::post('/chat/{item}/save-draft', [\App\Http\Controllers\ChatController::class, 'saveDraft'])->name('chat.save-draft');
 });
 
 // 商品詳細（未ログインでも閲覧可）

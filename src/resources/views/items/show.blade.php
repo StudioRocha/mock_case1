@@ -118,9 +118,9 @@
                 <h2 class="p-detail__section">
                     コメント({{ $item->comments()->count() }})
                 </h2>
-                <div class="p-detail__comment-list">
+                <ul class="p-detail__comment-list">
                     @foreach($item->comments as $comment)
-                    <div class="p-comment">
+                    <li class="p-comment">
                         <div class="p-comment__header">
                             <div class="p-comment__avatar">
                                 <div
@@ -140,9 +140,9 @@
                         <div class="p-comment__body">
                             {{ $comment->comment_body }}
                         </div>
-                    </div>
+                    </li>
                     @endforeach
-                </div>
+                </ul>
 
                 <form
                     action="{{ url('/item/'.$item->id.'/comment') }}"

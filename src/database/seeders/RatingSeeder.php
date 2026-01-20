@@ -26,9 +26,8 @@ class RatingSeeder extends Seeder
             return;
         }
 
-        // 田中太郎が出品した商品を取得（CO01～CO05のいずれか）
+        // 田中太郎が出品した商品を取得（最初の1つ）
         $tanakaItem = Item::where('user_id', $tanaka->id)
-            ->where('item_names', 'like', 'CO%')
             ->first();
 
         if (!$tanakaItem) {

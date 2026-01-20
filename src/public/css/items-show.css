@@ -177,6 +177,11 @@
 .p-detail__comments {
     margin-top: 24px;
 }
+.p-detail__comment-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
 .p-detail__comments .p-detail__section {
     color: #888;
 }
@@ -246,7 +251,97 @@
 }
 
 @media (max-width: 900px) {
+    .p-detail {
+        margin: 20px auto 48px;
+        padding: 0 clamp(12px, 3vw, 24px);
+    }
+    
     .p-detail__main {
-        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+    
+    .p-detail__name {
+        font-size: clamp(24px, 2.5vw, 28px);
+    }
+    
+    .p-detail__brand {
+        font-size: clamp(13px, 1.3vw, 14px);
+    }
+    
+    .p-detail__price {
+        font-size: clamp(20px, 2.2vw, 22px);
+    }
+    
+    .p-detail__badge {
+        font-size: clamp(24px, 2.5vw, 28px);
+        padding: 4px 10px;
+    }
+    
+    .p-detail__section {
+        font-size: clamp(18px, 2vw, 20px);
+        margin-top: 32px;
+    }
+    
+    .p-detail__desc {
+        font-size: clamp(14px, 1.4vw, 16px);
+    }
+    
+    .p-detail__tags {
+        margin-top: 24px;
+    }
+    
+    .p-detail .c-tag span {
+        font-size: clamp(14px, 1.4vw, 16px);
+        padding: 3px 10px;
+    }
+    
+    .p-detail__spec {
+        font-size: clamp(14px, 1.4vw, 16px);
+    }
+    
+    .p-detail__spec-value {
+        font-size: clamp(13px, 1.3vw, 14px);
+    }
+    
+    .p-comment__user {
+        font-size: clamp(16px, 1.6vw, 18px);
+    }
+    
+    .p-comment__date {
+        font-size: clamp(12px, 1.2vw, 14px);
+    }
+    
+    .p-comment__body {
+        font-size: clamp(14px, 1.4vw, 16px);
+        padding: 10px 14px;
+    }
+    
+    .p-detail__buy-btn {
+        height: 40px;
+        font-size: clamp(14px, 1.4vw, 16px);
+    }
+    
+    .p-like__btn {
+        font-size: clamp(20px, 2vw, 22px);
+        height: 20px;
+        line-height: 20px;
+    }
+    
+    .p-like__count {
+        font-size: clamp(12px, 1.2vw, 14px);
+    }
+    
+    .p-detail__comment-count {
+        font-size: clamp(12px, 1.2vw, 14px);
+    }
+    
+    .c-icon {
+        width: clamp(20px, 2vw, 22px);
+        height: clamp(20px, 2vw, 22px);
+    }
+    
+    .p-comment__avatar {
+        width: clamp(50px, 5vw, 60px);
+        height: clamp(50px, 5vw, 60px);
     }
 }

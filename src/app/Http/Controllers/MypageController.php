@@ -17,15 +17,13 @@ class MypageController extends Controller
         $user->load('profile'); // プロフィール情報を事前読み込み
         $activeTab = $request->query('page', 'sell');
 
-        $listedItems = Item::query()
-            ->where('user_id', $user->id)
+        $listedItems = Item::where('user_id', $user->id)
             ->with(['user', 'categories'])
             ->orderByDesc('updated_at')
             ->paginate(12)
             ->withQueryString();
 
-        $purchasedItems = Order::query()
-            ->where('user_id', $user->id)
+        $purchasedItems = Order::where('user_id', $user->id)
             ->with(['item.user', 'item.categories'])
             ->orderByDesc('created_at')
             ->get()
@@ -35,8 +33,7 @@ class MypageController extends Controller
             ->filter();
 
         // 取引中の商品を取得（出品者または購入者として）
-        $tradingOrders = Order::query()
-            ->where(function($query) use ($user) {
+        $tradingOrders = Order::where(function($query) use ($user) {
                 // 購入者として
                 $query->where('user_id', $user->id)
                       // または出品者として

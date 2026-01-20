@@ -131,7 +131,6 @@ class ItemSeeder extends Seeder
         // CO06～CO10: ユーザー2
         foreach ($predefinedItemsData as $itemData) {
             $itemCode = $itemData['item_code'];
-            $itemNameWithCode = "{$itemCode} {$itemData['item_names']}";
             
             // 商品コードに応じてユーザーを割り当て
             $codeNumber = (int)substr($itemCode, 2);
@@ -145,11 +144,11 @@ class ItemSeeder extends Seeder
             }
             
             $item = Item::firstOrCreate(
-                ['item_names' => $itemNameWithCode], // 商品名（コード付き）で重複チェック
+                ['item_names' => $itemData['item_names']], // 商品名で重複チェック
                 [
                     'user_id' => $assignedUser->id,
                     'item_image_paths' => $itemData['item_image_paths'], // ローカルパスをそのまま使用
-                    'item_names' => $itemNameWithCode,
+                    'item_names' => $itemData['item_names'],
                     'brand_names' => $itemData['brand_names'] ?? null,
                     'item_prices' => $itemData['item_prices'],
                     'like_counts' => 0,
@@ -164,7 +163,7 @@ class ItemSeeder extends Seeder
             $randomCategories = $categories->random(rand(1, 3));
             $item->categories()->sync($randomCategories->pluck('id'));
             
-            $this->command->info("商品「{$itemNameWithCode}」をユーザー「{$assignedUser->name}」が出品しました。");
+            $this->command->info("商品「{$itemData['item_names']}」をユーザー「{$assignedUser->name}」が出品しました。");
         }
 
         $this->command->info('商品ダミーデータを作成しました。');

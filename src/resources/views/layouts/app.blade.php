@@ -21,6 +21,7 @@
                 <div class="p-header">
                     @php($isAuthPage = request()->routeIs('login') ||
                     request()->routeIs('register'))
+                    @php($isChatPage = request()->routeIs('chat.*'))
                     <div class="p-header__left">
                         <a href="/" class="p-header__logo">
                             <img
@@ -30,7 +31,7 @@
                             />
                         </a>
                     </div>
-                    @unless($isAuthPage)
+                    @unless($isAuthPage || $isChatPage)
                     <div class="p-header__center">
                         <form
                             action="{{ route('items.index') }}"
@@ -84,13 +85,20 @@
                         </nav>
                     </div>
                     @endunless
+                    @if($isChatPage)
+                    <div class="p-header__center"></div>
+                    <div class="p-header__right"></div>
+                    @endif
                 </div>
             </div>
         </header>
 
-        <main class="l-main">
-            <div class="l-container">
-                @include('components.flash') @yield('content')
+        <main class="l-main @if($isChatPage) l-main--chat @endif">
+            <div class="l-container @if($isChatPage) l-container--chat @endif">
+                @unless($isChatPage)
+                @include('components.flash')
+                @endunless
+                @yield('content')
             </div>
         </main>
     </body>

@@ -19,6 +19,7 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
+    min-height: 62px; /* ユーザー名(30px) + gap(8px) + 評価エリア(24px) = 62px */
 }
 .p-mypage__name {
     font-size: 30px;
@@ -27,6 +28,7 @@
 .p-mypage__rating {
     display: flex;
     gap: 2px;
+    min-height: 24px; /* 評価がない場合でも高さを確保 */
 }
 .p-mypage__star {
     color: #d3d3d3;
@@ -46,6 +48,9 @@
 }
 .p-tabs__tab {
     position: relative;
+    min-height: 40px; /* アクティブ状態でも高さを一定に保つ */
+    display: flex;
+    align-items: center;
 }
 .p-tabs__badge {
     position: absolute;
@@ -83,4 +88,43 @@
     line-height: 1;
     padding: 0 6px;
     z-index: 1;
+}
+
+/* タブレット対応 (768px - 850px) */
+@media (min-width: 768px) and (max-width: 850px) {
+    .p-mypage__header {
+        padding: 0 clamp(12px, 5vw, 70px);
+    }
+    
+    .p-mypage__user-info {
+        margin-left: 35px;
+    }
+    
+    .p-mypage__name {
+        font-size: 26px;
+    }
+    
+    .p-mypage__star {
+        font-size: 22px;
+    }
+    
+    .p-tabs.p-mypage__tabs,
+    .p-mypage__tabs .p-tabs {
+        padding-left: clamp(12px, 5vw, 55px);
+    }
+    
+    .p-tabs__tab {
+        font-size: 14px;
+        padding: 11px clamp(6px, 0.9vw, 8px);
+    }
+    
+    .p-tabs__badge {
+        font-size: 11px;
+        width: 18px;
+        height: 18px;
+    }
+    
+    .c-card__name {
+        font-size: clamp(13px, 1.1vw, 14px);
+    }
 }

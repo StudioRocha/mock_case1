@@ -14,6 +14,7 @@ class Message extends Model
         'item_id',
         'user_id',
         'message',
+        'image_path',
     ];
 
     public function item()
