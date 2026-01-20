@@ -56,31 +56,31 @@ use Illuminate\Support\Str;
             </div>
 
             <!-- メッセージ表示エリア -->
-            <ul class="p-chat__messages" id="chatMessages">
+            <div class="p-chat__messages" id="chatMessages">
                 @forelse($messages as $message)
-                <li class="p-chat__message {{ $message->user_id === Auth::id() ? 'p-chat__message--own' : '' }}">
+                <div class="p-chat__message {{ $message->user_id === Auth::id() ? 'p-chat__message--own' : '' }}">
                     <div class="p-chat__message-content">
-                        <div class="p-chat__message-avatar">
-                            <div class="p-chat__message-avatar-bg" style="@if(optional($message->user->profile)->avatar_paths) background-image:url('{{ asset('storage/'. $message->user->profile->avatar_paths) }}') @endif"></div>
-                        </div>
-                        <div class="p-chat__message-text-wrapper">
+                        <div class="p-chat__message-header">
                             <div class="p-chat__message-name">{{ optional($message->user->profile)->usernames ?? $message->user->name }}</div>
-                            <div class="p-chat__message-bubble">
-                                {{ $message->message }}
+                            <div class="p-chat__message-avatar">
+                                <div class="p-chat__message-avatar-bg" style="@if(optional($message->user->profile)->avatar_paths) background-image:url('{{ asset('storage/'. $message->user->profile->avatar_paths) }}') @endif"></div>
                             </div>
-                            @if($message->user_id === Auth::id())
-                            <div class="p-chat__message-actions">
-                                <button class="p-chat__message-edit" data-message-id="{{ $message->id }}">編集</button>
-                                <button class="p-chat__message-delete" data-message-id="{{ $message->id }}">削除</button>
-                            </div>
-                            @endif
                         </div>
+                        <div class="p-chat__message-bubble">
+                            {{ $message->message }}
+                        </div>
+                        @if($message->user_id === Auth::id())
+                        <div class="p-chat__message-actions">
+                            <button class="p-chat__message-edit" data-message-id="{{ $message->id }}">編集</button>
+                            <button class="p-chat__message-delete" data-message-id="{{ $message->id }}">削除</button>
+                        </div>
+                        @endif
                     </div>
-                </li>
+                </div>
                 @empty
-                <li class="p-chat__messages-empty">まだメッセージがありません</li>
+                <div class="p-chat__messages-empty">まだメッセージがありません</div>
                 @endforelse
-            </ul>
+            </div>
 
             <!-- メッセージ入力フォーム -->
             <div class="p-chat__input-area">
