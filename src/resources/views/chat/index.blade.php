@@ -135,10 +135,17 @@ use Illuminate\Support\Str;
         <form id="editMessageForm" method="POST">
             @csrf
             @method('PUT')
+            @if($errors->any())
+            <div class="p-chat__modal-errors">
+                @foreach($errors->all() as $error)
+                <div class="p-chat__modal-error">{{ $error }}</div>
+                @endforeach
+            </div>
+            @endif
             <textarea
                 name="message"
-                class="p-chat__modal-textarea"
-            ></textarea>
+                class="p-chat__modal-textarea @error('message') p-chat__modal-textarea--error @enderror"
+            >{{ old('message') }}</textarea>
             <div class="p-chat__modal-actions">
                 <button type="button" class="p-chat__modal-cancel" id="cancelEditBtn">キャンセル</button>
                 <button type="submit" class="p-chat__modal-submit">更新</button>

@@ -122,8 +122,7 @@ class ChatController extends Controller
         // セッションから入力情報を削除
         session()->forget("chat_message_{$item->id}");
 
-        return redirect()->route('chat.index', $item)
-            ->with('success', 'メッセージを送信しました。');
+        return redirect()->route('chat.index', $item);
     }
 
     /**
@@ -135,8 +134,7 @@ class ChatController extends Controller
 
         // 自分のメッセージのみ編集可能
         if ($message->user_id !== $user->id) {
-            return redirect()->route('chat.index', $item)
-                ->with('error', 'このメッセージを編集する権限がありません。');
+            return redirect()->route('chat.index', $item);
         }
 
         // メッセージを更新
@@ -144,8 +142,7 @@ class ChatController extends Controller
             'message' => $request->message,
         ]);
 
-        return redirect()->route('chat.index', $item)
-            ->with('success', 'メッセージを更新しました。');
+        return redirect()->route('chat.index', $item);
     }
 
     /**
@@ -157,15 +154,13 @@ class ChatController extends Controller
 
         // 自分のメッセージのみ削除可能
         if ($message->user_id !== $user->id) {
-            return redirect()->route('chat.index', $item)
-                ->with('error', 'このメッセージを削除する権限がありません。');
+            return redirect()->route('chat.index', $item);
         }
 
         // メッセージを削除（ソフトデリート）
         $message->delete();
 
-        return redirect()->route('chat.index', $item)
-            ->with('success', 'メッセージを削除しました。');
+        return redirect()->route('chat.index', $item);
     }
 
     /**
