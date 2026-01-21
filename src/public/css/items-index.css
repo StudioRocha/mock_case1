@@ -13,7 +13,8 @@
 }
 /* タブ開始位置をやや右に寄せる */
 .p-top-tabs .p-tabs {
-    margin-top: 0; /* 上の余白を詰める（共通のp-tabsより優先） */
+    margin-top: clamp(16px, 3vw, 16px); /* 上の余白を広く */
+    border-bottom-width: 2px;
 }
 
 .p-top-tabs .p-tabs__list {

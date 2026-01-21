@@ -36,6 +36,11 @@ class Order extends Model
     {
         return $this->hasOne(Rating::class);
     }
+
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class);
+    }
 }
 
 

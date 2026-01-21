@@ -55,6 +55,7 @@ Route::middleware(['auth', 'block.unverified'])->group(function () {
     Route::put('/chat/{item}/message/{message}', [\App\Http\Controllers\ChatController::class, 'update'])->name('chat.update');
     Route::delete('/chat/{item}/message/{message}', [\App\Http\Controllers\ChatController::class, 'destroy'])->name('chat.destroy');
     Route::post('/chat/{item}/complete', [\App\Http\Controllers\ChatController::class, 'complete'])->name('chat.complete');
+    Route::post('/chat/{item}/seller-rate', [\App\Http\Controllers\ChatController::class, 'sellerRate'])->name('chat.seller-rate');
     Route::post('/chat/{item}/save-draft', [\App\Http\Controllers\ChatController::class, 'saveDraft'])->name('chat.save-draft');
     Route::post('/chat/{item}/mark-as-read', [\App\Http\Controllers\ChatController::class, 'markAsRead'])->name('chat.mark-as-read');
 });

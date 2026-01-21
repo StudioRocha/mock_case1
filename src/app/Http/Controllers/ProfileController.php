@@ -11,6 +11,7 @@ class ProfileController extends Controller
 {
     public function edit()
     {
+        /** @var \App\Models\User $user */
         $user = Auth::user();
         $profile = $user->profile;
         

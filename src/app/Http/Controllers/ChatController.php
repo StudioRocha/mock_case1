@@ -5,10 +5,14 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Mail;
 use App\Models\Item;
 use App\Models\Order;
 use App\Models\Message;
+use App\Models\Rating;
+use App\Models\User;
 use App\Http\Requests\ChatMessageRequest;
+use App\Mail\TradeCompletedMail;
 
 class ChatController extends Controller
 {
@@ -20,6 +24,7 @@ class ChatController extends Controller
         $user = Auth::user();
 
         // 取引中のOrderを取得（購入者または出品者として）
+        // 購入者が評価を送信した後でも出品者が評価できるように、TRADING状態のものを取得
         $order = Order::where('item_id', $item->id)
             ->where('trade_status', Order::TRADE_STATUS_TRADING)
             ->where(function($query) use ($user) {
@@ -30,7 +35,7 @@ class ChatController extends Controller
                           $q->where('user_id', $user->id);
                       });
             })
-            ->with(['item.user', 'user'])
+            ->with(['item.user', 'user', 'ratings'])
             ->first();
 
         if (!$order) {
@@ -65,6 +70,21 @@ class ChatController extends Controller
         // 購入者かどうかを判定
         $isBuyer = $order->user_id === $user->id;
 
+        // 既読情報を更新する前に、前回の既読時刻を取得
+        $lastViewedAt = $isBuyer ? $order->buyer_last_viewed_at : $order->seller_last_viewed_at;
+
+        // 既に取得済みの$messagesコレクションから既読位置を特定（追加クエリなし）
+        $lastReadMessageId = null;
+        if ($lastViewedAt && $messages->isNotEmpty()) {
+            foreach ($messages as $message) {
+                if ($message->created_at <= $lastViewedAt) {
+                    $lastReadMessageId = $message->id;
+                } else {
+                    break; // 時系列順なので、超えたら終了
+                }
+            }
+        }
+
         // 既読情報を更新（チャット画面を開いた時点で既読とする）
         if ($isBuyer) {
             $order->update(['buyer_last_viewed_at' => now()]);
@@ -75,6 +95,19 @@ class ChatController extends Controller
         // セッションから入力情報を取得（入力情報保持機能）
         $savedMessage = session("chat_message_{$item->id}", '');
 
+        // 購入者が評価済みかチェック
+        $buyerHasRated = Rating::where('order_id', $order->id)
+            ->where('rater_id', $order->user_id)
+            ->exists();
+        
+        // 出品者が評価済みかチェック
+        $sellerHasRated = Rating::where('order_id', $order->id)
+            ->where('rater_id', $order->item->user_id)
+            ->exists();
+        
+        // 出品者が評価できるか（購入者が評価済みで、出品者がまだ評価していない場合）
+        $canSellerRate = !$isBuyer && $buyerHasRated && !$sellerHasRated;
+
         return view('chat.index', [
             'item' => $item,
             'order' => $order,
@@ -83,6 +116,9 @@ class ChatController extends Controller
             'otherTradingOrders' => $otherTradingOrders,
             'isBuyer' => $isBuyer,
             'savedMessage' => $savedMessage,
+            'lastReadMessageId' => $lastReadMessageId,
+            'canSellerRate' => $canSellerRate,
+            'buyerHasRated' => $buyerHasRated,
         ]);
     }
 
@@ -109,11 +145,25 @@ class ChatController extends Controller
                 ->with('error', '取引中の商品が見つかりません。');
         }
 
+        // 画像アップロード処理
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            // messagesディレクトリが存在しない場合は作成
+            $messagesPath = storage_path('app/public/messages');
+            if (!file_exists($messagesPath)) {
+                mkdir($messagesPath, 0777, true);
+                chmod($messagesPath, 0777);
+            }
+            
+            $imagePath = $request->file('image')->store('messages', 'public');
+        }
+
         // メッセージを作成
         Message::create([
             'item_id' => $item->id,
             'user_id' => $user->id,
             'message' => $request->message,
+            'image_path' => $imagePath,
         ]);
 
         // Orderのupdated_atを更新（並び替え用）
@@ -166,7 +216,7 @@ class ChatController extends Controller
     /**
      * 取引を完了（購入者のみ）
      */
-    public function complete(Item $item)
+    public function complete(Request $request, Item $item)
     {
         $user = Auth::user();
 
@@ -181,15 +231,63 @@ class ChatController extends Controller
                 ->with('error', '取引中の商品が見つかりません。');
         }
 
-        // 取引状態を完了に更新
-        $order->update([
-            'trade_status' => Order::TRADE_STATUS_COMPLETED,
+        // 既に評価済みかチェック
+        $existingRating = Rating::where('order_id', $order->id)
+            ->where('rater_id', $user->id)
+            ->first();
+
+        if ($existingRating) {
+            return redirect()->route('chat.index', $item)
+                ->with('error', '既に評価済みです。');
+        }
+
+        // 評価のバリデーション
+        $request->validate([
+            'rating' => ['required', 'integer', 'min:1', 'max:5'],
+        ], [
+            'rating.required' => '評価を選択してください',
+            'rating.integer' => '評価は数値で入力してください',
+            'rating.min' => '評価は1以上で入力してください',
+            'rating.max' => '評価は5以下で入力してください',
         ]);
 
-        // TODO: フェーズ6で実装予定 - 取引完了モーダルから評価機能を実装
+        // 評価される人（出品者）を取得
+        $ratedUser = $order->item->user;
+
+        // 評価を保存
+        Rating::create([
+            'order_id' => $order->id,
+            'rater_id' => $user->id,
+            'rated_id' => $ratedUser->id,
+            'rating' => $request->rating,
+        ]);
+
+        // 商品購入者が取引を完了したので、出品者宛に通知メールを送信
+        $buyer = $order->user;
+        $seller = $ratedUser;
+        
+        Mail::to($seller->email)->send(new TradeCompletedMail($order, $seller, $buyer));
+
+        // 両方の評価が揃っているかチェック
+        $buyerRating = Rating::where('order_id', $order->id)
+            ->where('rater_id', $order->user_id)
+            ->first();
+        $sellerRating = Rating::where('order_id', $order->id)
+            ->where('rater_id', $ratedUser->id)
+            ->first();
+
+        // 両方の評価が揃っている場合のみ取引を完了にする
+        if ($buyerRating && $sellerRating) {
+            $order->update([
+                'trade_status' => Order::TRADE_STATUS_COMPLETED,
+            ]);
+            
+            return redirect()->route('items.index')
+                ->with('success', '取引を完了し、評価を投稿しました。');
+        }
 
         return redirect()->route('items.index')
-            ->with('success', '取引を完了しました。');
+            ->with('success', '評価を投稿しました。');
     }
 
     /**
@@ -233,5 +331,75 @@ class ChatController extends Controller
         }
 
         return response()->json(['success' => true]);
+    }
+
+    /**
+     * 出品者が評価を送信（購入者が評価済みの場合のみ）
+     */
+    public function sellerRate(Request $request, Item $item)
+    {
+        $user = Auth::user();
+
+        // 取引中のOrderを確認（出品者のみ）
+        $order = Order::where('item_id', $item->id)
+            ->where('trade_status', Order::TRADE_STATUS_TRADING)
+            ->whereHas('item', function($q) use ($user) {
+                $q->where('user_id', $user->id);
+            })
+            ->first();
+
+        if (!$order) {
+            return redirect()->route('chat.index', $item)
+                ->with('error', '取引中の商品が見つかりません。');
+        }
+
+        // 購入者が評価済みかチェック
+        $buyerRating = Rating::where('order_id', $order->id)
+            ->where('rater_id', $order->user_id)
+            ->first();
+
+        if (!$buyerRating) {
+            return redirect()->route('chat.index', $item)
+                ->with('error', '購入者がまだ評価を送信していません。');
+        }
+
+        // 出品者が既に評価済みかチェック
+        $existingSellerRating = Rating::where('order_id', $order->id)
+            ->where('rater_id', $user->id)
+            ->first();
+
+        if ($existingSellerRating) {
+            return redirect()->route('chat.index', $item)
+                ->with('error', '既に評価済みです。');
+        }
+
+        // 評価のバリデーション
+        $request->validate([
+            'rating' => ['required', 'integer', 'min:1', 'max:5'],
+        ], [
+            'rating.required' => '評価を選択してください',
+            'rating.integer' => '評価は数値で入力してください',
+            'rating.min' => '評価は1以上で入力してください',
+            'rating.max' => '評価は5以下で入力してください',
+        ]);
+
+        // 評価される人（購入者）を取得
+        $ratedUser = $order->user;
+
+        // 評価を保存
+        Rating::create([
+            'order_id' => $order->id,
+            'rater_id' => $user->id,
+            'rated_id' => $ratedUser->id,
+            'rating' => $request->rating,
+        ]);
+
+        // 両方の評価が揃ったので取引を完了にする
+        $order->update([
+            'trade_status' => Order::TRADE_STATUS_COMPLETED,
+        ]);
+
+        return redirect()->route('items.index')
+            ->with('success', '評価を投稿しました。');
     }
 }

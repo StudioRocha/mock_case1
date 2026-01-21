@@ -1,10 +1,10 @@
 /* プロフィール画面の微調整（共通の .p-form/.p-avatar ベース） */
 .p-avatar {
-    justify-content: center;
+    justify-content: flex-start;
 }
 .p-avatar__thumb {
-    width: 140px;
-    height: 140px;
+    width: 120px;
+    height: 120px;
 }
 .p-auth {
     max-width: 540px;

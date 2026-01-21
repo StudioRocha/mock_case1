@@ -94,9 +94,56 @@
     }
     
     // ============================================
+    // 画像アップロード機能
+    // ============================================
+    const imageBtn = document.getElementById('imageBtn');
+    const imageInput = document.getElementById('imageInput');
+    const imagePreview = document.getElementById('imagePreview');
+    const previewImg = document.getElementById('previewImg');
+    const removeImageBtn = document.getElementById('removeImageBtn');
+    
+    if (imageBtn && imageInput) {
+        // 画像追加ボタンクリックでファイル選択ダイアログを開く
+        imageBtn.addEventListener('click', function() {
+            imageInput.click();
+        });
+        
+        // ファイル選択時の処理
+        imageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                // ファイルサイズチェック（5MB以下）
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('画像ファイルは5MB以下にしてください。');
+                    imageInput.value = '';
+                    return;
+                }
+                
+                // 画像プレビューを表示
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+    
+    // 画像削除ボタン
+    if (removeImageBtn) {
+        removeImageBtn.addEventListener('click', function() {
+            imageInput.value = '';
+            imagePreview.style.display = 'none';
+            previewImg.src = '';
+        });
+    }
+    
+    // ============================================
     // 取引完了機能（購入者のみ）
     // ============================================
     if (config.isBuyer) {
+        // 購入者の評価モーダル
         const completeBtn = document.getElementById('completeTransactionBtn');
         const cancelCompleteBtn = document.getElementById('cancelCompleteBtn');
         
@@ -109,6 +156,93 @@
         if (cancelCompleteBtn) {
             cancelCompleteBtn.addEventListener('click', function() {
                 hideModal('completeModal');
+            });
+        }
+        
+        // 星評価のホバー・選択効果
+        const starLabels = document.querySelectorAll('.p-chat__star-label');
+        const starInputs = document.querySelectorAll('.p-chat__modal-stars input[type="radio"]');
+        
+        starLabels.forEach(function(label, index) {
+            // ホバー時: その星と前の星を黄色にする
+            label.addEventListener('mouseenter', function() {
+                for (let i = 0; i <= index; i++) {
+                    starLabels[i].setAttribute('data-hover', 'true');
+                }
+            });
+            
+            label.addEventListener('mouseleave', function() {
+                starLabels.forEach(function(l) {
+                    l.removeAttribute('data-hover');
+                });
+            });
+            
+            // クリック時: 選択状態を更新
+            label.addEventListener('click', function() {
+                updateStarSelection(index);
+            });
+        });
+        
+        starInputs.forEach(function(input, index) {
+            input.addEventListener('change', function() {
+                updateStarSelection(index);
+            });
+        });
+        
+        function updateStarSelection(selectedIndex) {
+            starLabels.forEach(function(label, index) {
+                if (index <= selectedIndex) {
+                    label.setAttribute('data-selected', 'true');
+                } else {
+                    label.removeAttribute('data-selected');
+                }
+            });
+        }
+    }
+    
+    // ============================================
+    // 出品者評価機能（購入者が評価済みの場合）
+    // ============================================
+    const sellerRateModal = document.getElementById('sellerRateModal');
+    if (sellerRateModal) {
+        // ページ読み込み時に出品者評価モーダルを自動表示
+        showModal('sellerRateModal');
+        
+        // 出品者評価の星評価のホバー・選択効果
+        const sellerStarLabels = sellerRateModal.querySelectorAll('.p-chat__star-label');
+        const sellerStarInputs = sellerRateModal.querySelectorAll('.p-chat__modal-stars input[type="radio"]');
+        
+        sellerStarLabels.forEach(function(label, index) {
+            label.addEventListener('mouseenter', function() {
+                for (let i = 0; i <= index; i++) {
+                    sellerStarLabels[i].setAttribute('data-hover', 'true');
+                }
+            });
+            
+            label.addEventListener('mouseleave', function() {
+                sellerStarLabels.forEach(function(l) {
+                    l.removeAttribute('data-hover');
+                });
+            });
+            
+            label.addEventListener('click', function() {
+                updateSellerStarSelection(index);
+            });
+        });
+        
+        sellerStarInputs.forEach(function(input, index) {
+            input.addEventListener('change', function() {
+                updateSellerStarSelection(index);
+            });
+        });
+        
+        function updateSellerStarSelection(selectedIndex) {
+            sellerStarLabels.forEach(function(label, index) {
+                if (index <= selectedIndex) {
+                    label.setAttribute('data-selected', 'true');
+                } else {
+                    label.removeAttribute('data-selected');
+                }
             });
         }
     }
@@ -193,5 +327,28 @@
         document.addEventListener('DOMContentLoaded', markAsRead);
     } else {
         markAsRead();
+    }
+    
+    // ============================================
+    // 既読位置へのスクロール機能
+    // ============================================
+    function scrollToLastReadPosition() {
+        const lastReadMessage = document.querySelector('[data-last-read="true"]');
+        if (lastReadMessage) {
+            // レンダリング完了を待ってからスクロール（アニメーションなし）
+            setTimeout(function() {
+                lastReadMessage.scrollIntoView({
+                    behavior: 'auto',
+                    block: 'center'
+                });
+            }, 100);
+        }
+    }
+    
+    // ページ読み込み時に既読位置へスクロール
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', scrollToLastReadPosition);
+    } else {
+        scrollToLastReadPosition();
     }
 })();
