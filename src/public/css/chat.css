@@ -63,6 +63,7 @@
     text-align: center;
     transition: background-color 0.2s;
     box-sizing: border-box;
+    
 }
 
 .p-chat__sidebar-item:hover {
