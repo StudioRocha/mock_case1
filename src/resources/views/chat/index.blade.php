@@ -14,7 +14,8 @@ use Illuminate\Support\Str;
      data-save-draft-url="{{ route('chat.save-draft', $item) }}"
      data-csrf-token="{{ csrf_token() }}"
      data-update-url-template="{{ route('chat.update', ['item' => $item->id, 'message' => ':messageId']) }}"
-     data-destroy-url-template="{{ route('chat.destroy', ['item' => $item->id, 'message' => ':messageId']) }}">
+     data-destroy-url-template="{{ route('chat.destroy', ['item' => $item->id, 'message' => ':messageId']) }}"
+     data-mark-as-read-url="{{ route('chat.mark-as-read', $item) }}">
     <div class="p-chat__container">
         <!-- サイドバー -->
         @include('components.chat.sidebar', ['otherTradingOrders' => $otherTradingOrders])

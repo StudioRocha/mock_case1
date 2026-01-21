@@ -65,6 +65,13 @@ class ChatController extends Controller
         // 購入者かどうかを判定
         $isBuyer = $order->user_id === $user->id;
 
+        // 既読情報を更新（チャット画面を開いた時点で既読とする）
+        if ($isBuyer) {
+            $order->update(['buyer_last_viewed_at' => now()]);
+        } else {
+            $order->update(['seller_last_viewed_at' => now()]);
+        }
+
         // セッションから入力情報を取得（入力情報保持機能）
         $savedMessage = session("chat_message_{$item->id}", '');
 
@@ -197,6 +204,39 @@ class ChatController extends Controller
     {
         $message = $request->input('message', '');
         Session::put("chat_message_{$item->id}", $message);
+        return response()->json(['success' => true]);
+    }
+
+    /**
+     * 既読情報を更新（非同期処理用）
+     */
+    public function markAsRead(Request $request, Item $item)
+    {
+        $user = Auth::user();
+
+        // 取引中のOrderを取得
+        $order = Order::where('item_id', $item->id)
+            ->where('trade_status', Order::TRADE_STATUS_TRADING)
+            ->where(function($query) use ($user) {
+                $query->where('user_id', $user->id)
+                      ->orWhereHas('item', function($q) use ($user) {
+                          $q->where('user_id', $user->id);
+                      });
+            })
+            ->first();
+
+        if (!$order) {
+            return response()->json(['success' => false, 'message' => '取引中の商品が見つかりません。'], 404);
+        }
+
+        // 既読情報を更新
+        $isBuyer = $order->user_id === $user->id;
+        if ($isBuyer) {
+            $order->update(['buyer_last_viewed_at' => now()]);
+        } else {
+            $order->update(['seller_last_viewed_at' => now()]);
+        }
+
         return response()->json(['success' => true]);
     }
 }

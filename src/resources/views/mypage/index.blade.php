@@ -146,4 +146,8 @@
     </ul>
     @endif
 </div>
+
+@push('scripts')
+<script src="{{ asset('js/mypage.js') }}"></script>
+@endpush
 @endsection

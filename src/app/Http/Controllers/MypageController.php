@@ -59,30 +59,26 @@ class MypageController extends Controller
         
         foreach ($tradingOrders as $order) {
             $itemId = $order->item_id;
-            $latestMessage = Message::where('item_id', $itemId)
-                ->orderByDesc('created_at')
-                ->first();
+            
+            // 購入者か出品者かを判定
+            $isBuyer = $order->user_id === $user->id;
+            
+            // 最後に閲覧した時刻を取得
+            $lastViewedAt = $isBuyer ? $order->buyer_last_viewed_at : $order->seller_last_viewed_at;
             
             $itemUnreadCount = 0;
-            // 最新メッセージが存在し、自分以外のユーザーから送信された場合
-            if ($latestMessage && $latestMessage->user_id !== $user->id) {
-                // 自分が最後に送信したメッセージ以降のメッセージ数をカウント
-                $myLastMessage = Message::where('item_id', $itemId)
-                    ->where('user_id', $user->id)
-                    ->orderByDesc('created_at')
-                    ->first();
-                
-                if ($myLastMessage) {
-                    $itemUnreadCount = Message::where('item_id', $itemId)
-                        ->where('created_at', '>', $myLastMessage->created_at)
-                        ->where('user_id', '!=', $user->id)
-                        ->count();
-                } else {
-                    // 自分がまだメッセージを送信していない場合、すべてのメッセージが未読
-                    $itemUnreadCount = Message::where('item_id', $itemId)
-                        ->where('user_id', '!=', $user->id)
-                        ->count();
-                }
+            
+            if ($lastViewedAt) {
+                // 最後に閲覧した時刻以降の、自分以外のユーザーからのメッセージ数をカウント
+                $itemUnreadCount = Message::where('item_id', $itemId)
+                    ->where('created_at', '>', $lastViewedAt)
+                    ->where('user_id', '!=', $user->id)
+                    ->count();
+            } else {
+                // まだ一度も閲覧していない場合、自分以外のユーザーからのすべてのメッセージが未読
+                $itemUnreadCount = Message::where('item_id', $itemId)
+                    ->where('user_id', '!=', $user->id)
+                    ->count();
             }
             
             $itemUnreadCounts[$itemId] = $itemUnreadCount;

@@ -164,7 +164,6 @@ ul.p-tabs {
 }
 .p-tabs__tab--active {
     color: #e60033;
-    border-bottom-color: #e60033;
 }
 
 /* Grid */

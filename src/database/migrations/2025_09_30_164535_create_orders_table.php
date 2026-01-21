@@ -23,6 +23,8 @@ class CreateOrdersTable extends Migration
             $table->string('payment_method', 50);
             $table->text('shipping_address');
             $table->text('comment')->nullable();
+            $table->timestamp('buyer_last_viewed_at')->nullable()->comment('購入者が最後にチャット画面を閲覧した時刻');
+            $table->timestamp('seller_last_viewed_at')->nullable()->comment('出品者が最後にチャット画面を閲覧した時刻');
             $table->timestamps();
         });
     }

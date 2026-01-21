@@ -12,7 +12,8 @@
         saveDraftUrl: chatContainer.dataset.saveDraftUrl,
         csrfToken: chatContainer.dataset.csrfToken,
         updateUrlTemplate: chatContainer.dataset.updateUrlTemplate,
-        destroyUrlTemplate: chatContainer.dataset.destroyUrlTemplate
+        destroyUrlTemplate: chatContainer.dataset.destroyUrlTemplate,
+        markAsReadUrl: chatContainer.dataset.markAsReadUrl
     };
     
     // ============================================
@@ -30,6 +31,23 @@
                 'X-CSRF-TOKEN': config.csrfToken
             },
             body: JSON.stringify({ message: message })
+        });
+    }
+    
+    /**
+     * 既読情報を更新（非同期処理）
+     */
+    function markAsRead() {
+        if (!config.markAsReadUrl) return;
+        
+        fetch(config.markAsReadUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': config.csrfToken
+            }
+        }).catch(function(error) {
+            console.error('既読情報の更新に失敗しました:', error);
         });
     }
     
@@ -153,4 +171,27 @@
             form.submit();
         });
     });
+    
+    // ============================================
+    // 既読情報更新機能（ブラウザバック対応）
+    // ============================================
+    // チャット画面を開いた時点で既読情報を更新することで、
+    // ブラウザバックでマイページに戻った時も既に既読になっている
+    
+    // ページ表示時（通常の読み込みとブラウザバックの両方）に既読情報を更新
+    window.addEventListener('pageshow', function(event) {
+        // ブラウザバックでキャッシュから復元された場合も処理を実行
+        // これにより、チャット画面がキャッシュから復元されても既読情報が更新される
+        if (event.persisted) {
+            markAsRead();
+        }
+    });
+    
+    // 通常のページ読み込み時にも既読情報を更新
+    // （サーバー側のChatController::index()でも更新しているが、念のため）
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', markAsRead);
+    } else {
+        markAsRead();
+    }
 })();
