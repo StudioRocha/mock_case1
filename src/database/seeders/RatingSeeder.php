@@ -55,19 +55,7 @@ class RatingSeeder extends Seeder
         // 商品を売却済みにマーク
         $tanakaItem->update(['is_sold' => true]);
 
-        // 佐藤花子が田中太郎を評価（3点）
-        Rating::firstOrCreate(
-            [
-                'order_id' => $order->id,
-            ],
-            [
-                'order_id' => $order->id,
-                'rater_id' => $sato->id, // 評価する人（佐藤花子）
-                'rated_id' => $tanaka->id, // 評価される人（田中太郎）
-                'rating' => 3, // 3点評価
-            ]
-        );
-
-        $this->command->info("田中太郎への評価データを作成しました（評価者: 佐藤花子、評価: 3点）。");
+        // 評価データは作成しない（佐藤さんからの評価はまだ行われていない状態）
+        $this->command->info("佐藤花子が田中太郎の商品を購入した取引データを作成しました（評価未送信）。");
     }
 }
