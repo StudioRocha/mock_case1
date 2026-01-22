@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Item;
 use App\Models\Order;
 use App\Models\Message;
+use App\Models\Rating;
 
 class MypageController extends Controller
 {
@@ -33,9 +34,13 @@ class MypageController extends Controller
             ->filter();
 
         // 取引中の商品を取得（出品者または購入者として）
+        // 購入者の場合、自分が評価済みの取引は除外（出品者は引き続き表示）
         $tradingOrders = Order::where(function($query) use ($user) {
-                // 購入者として
+                // 購入者として（ただし、自分が評価済みのものは除外）
                 $query->where('user_id', $user->id)
+                      ->whereDoesntHave('ratings', function($q) use ($user) {
+                          $q->where('rater_id', $user->id);
+                      })
                       // または出品者として
                       ->orWhereHas('item', function($q) use ($user) {
                           $q->where('user_id', $user->id);
