@@ -229,6 +229,12 @@ php artisan test --testsuite=Feature
 14. **UserProfileUpdateFeatureTest.php** - ユーザープロフィール更新機能（テスト ID: 14）
 15. **ItemRegistrationFeatureTest.php** - 商品出品機能（テスト ID: 15）
 16. **EmailVerificationFeatureTest.php** - メール認証機能（テスト ID: 16）
+17. **TestID17_TradingChatViewFeatureTest.php** - 取引チャット確認機能（テスト ID: 17）
+18. **TestID18_RatingAverageFeatureTest.php** - 評価平均確認機能（テスト ID: 18）
+19. **TestID19_ChatMessagePostFeatureTest.php** - 取引チャット投稿機能（テスト ID: 19）
+20. **TestID20_ChatMessageEditDeleteFeatureTest.php** - 取引チャット編集・削除機能（テスト ID: 20）
+21. **TestID21_TradingRatingFeatureTest.php** - 取引評価機能（テスト ID: 21）
+22. **TestID22_TradeCompletedEmailFeatureTest.php** - 取引完了メール送信機能（テスト ID: 22）
 
 ### 注意事項
 
@@ -237,10 +243,10 @@ php artisan test --testsuite=Feature
 -   `RefreshDatabase`トレイトにより、テスト実行時に自動的にデータベースがリフレッシュされます
 
 <BR>
-
+    
 ## 使用技術(実行環境)
 
--   php:8.1-fpm
+-   php:8.2-fpm
 -   Laravel 8.75
 -   Laravel Fortify (認証パッケージ)
 -   MySQL 8.0.26
