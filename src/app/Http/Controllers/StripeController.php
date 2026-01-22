@@ -64,6 +64,13 @@ class StripeController extends Controller
                 $request->shipping_address
             );
 
+            // Ajaxリクエストの場合はJSONで返す（コンビニ支払いの場合）
+            if (($request->ajax() || $request->wantsJson()) && $request->payment_method === 'convenience_store') {
+                // フラッシュメッセージをセッションに保存
+                session()->flash('success', '購入手続きを受け付けました。期限内にコンビニ支払を完了してください。');
+                return response()->json(['redirect_url' => $session->url]);
+            }
+
             return redirect($session->url);
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());

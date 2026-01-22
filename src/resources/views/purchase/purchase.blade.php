@@ -90,7 +90,7 @@
                     name="shipping_address"
                     value="{{ $currentAddress }}"
                 />
-                <button type="submit" class="p-purchase__buy-btn">
+                <button type="submit" class="p-purchase__buy-btn" id="purchase-submit-btn">
                     購入する
                 </button>
             </form>
@@ -114,6 +114,74 @@
             } else {
                 paymentDisplay.textContent = "-";
             }
+        });
+
+        // フォームサブミットをインターセプト（コンビニ支払いの場合のみ別タブで開く）
+        const purchaseForm = document.getElementById("purchase-form");
+        const purchaseSubmitBtn = document.getElementById("purchase-submit-btn");
+        
+        purchaseForm.addEventListener("submit", function(e) {
+            // 支払い方法が選択されているかチェック
+            const paymentMethod = paymentSelect.value;
+            if (!paymentMethod) {
+                e.preventDefault();
+                alert("支払い方法を選択してください");
+                return;
+            }
+            
+            // コンビニ支払いの場合のみ別タブで開く
+            if (paymentMethod === 'convenience_store') {
+                e.preventDefault();
+                
+                // ボタンを無効化
+                purchaseSubmitBtn.disabled = true;
+                purchaseSubmitBtn.textContent = "処理中...";
+                
+                // フォームデータを取得
+                const formData = new FormData(purchaseForm);
+                
+                // AjaxでセッションURLを取得
+                fetch(purchaseForm.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                    }
+                })
+                .then(response => {
+                    if (response.redirected) {
+                        // リダイレクト先のURLを取得
+                        const redirectUrl = response.url;
+                        // 別タブで開いてアクティブにする
+                        const newWindow = window.open(redirectUrl, '_blank');
+                        if (newWindow) {
+                            newWindow.focus();
+                        }
+                        // 元のタブで商品一覧画面に遷移
+                        window.location.href = '{{ route("items.index") }}';
+                    } else {
+                        return response.json();
+                    }
+                })
+                .then(data => {
+                    if (data && data.redirect_url) {
+                        // 別タブで開いてアクティブにする
+                        const newWindow = window.open(data.redirect_url, '_blank');
+                        if (newWindow) {
+                            newWindow.focus();
+                        }
+                        // 元のタブで商品一覧画面に遷移
+                        window.location.href = '{{ route("items.index") }}';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('決済セッションの作成に失敗しました');
+                    purchaseSubmitBtn.disabled = false;
+                    purchaseSubmitBtn.textContent = "購入する";
+                });
+            }
+            // カード支払いの場合は通常通りフォームをサブミット（同じタブで開く）
         });
     });
 </script>

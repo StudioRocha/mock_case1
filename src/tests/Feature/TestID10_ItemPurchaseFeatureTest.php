@@ -51,7 +51,7 @@ class ItemPurchaseFeatureTest extends TestCase
         // retrieveSessionメソッドをモック
         $mockStripeService->shouldReceive('retrieveSession')
             ->andReturn((object) [
-                'payment_status' => 'paid',
+                'payment_status' => Order::PAYMENT_STATUS_PAID,
                 'metadata' => (object) [
                     'user_id' => 1,
                     'item_id' => 1,
@@ -228,7 +228,7 @@ class ItemPurchaseFeatureTest extends TestCase
             'total_amount' => $item->item_prices,
             'payment_method' => 'card',
             'shipping_address' => 'テスト住所',
-            'payment_status' => 'paid',
+            'payment_status' => Order::PAYMENT_STATUS_PAID,
         ]);
 
         // 商品を売却済みにマーク
@@ -248,7 +248,7 @@ class ItemPurchaseFeatureTest extends TestCase
         $this->assertDatabaseHas('orders', [
             'user_id' => $user->id,
             'item_id' => $item->id,
-            'payment_status' => 'paid',
+            'payment_status' => Order::PAYMENT_STATUS_PAID,
         ]);
 
         // 期待挙動: 商品が売却済みになっている
@@ -334,7 +334,7 @@ class ItemPurchaseFeatureTest extends TestCase
             'total_amount' => $item->item_prices,
             'payment_method' => 'card',
             'shipping_address' => 'テスト住所',
-            'payment_status' => 'paid',
+            'payment_status' => Order::PAYMENT_STATUS_PAID,
         ]);
 
         // 商品を売却済みにマーク
@@ -354,11 +354,93 @@ class ItemPurchaseFeatureTest extends TestCase
         $this->assertDatabaseHas('orders', [
             'user_id' => $user->id,
             'item_id' => $item->id,
-            'payment_status' => 'paid',
+            'payment_status' => Order::PAYMENT_STATUS_PAID,
         ]);
 
         // 期待挙動: 商品が売却済みになっている
         $item->refresh();
         $this->assertEquals(1, $item->is_sold); // 1 = 売却済み
+    }
+
+    /**
+     * コンビニ決済の場合、payment_statusがPAYMENT_PENDINGでOrderが作成されることを検証する
+     * 手順:
+     *  1) ユーザーにログインする
+     *  2) 商品購入画面を開く
+     *  3) コンビニ決済を選択して「購入する」ボタンを押下
+     *
+     * 期待挙動: Orderレコードが作成され、payment_statusがPAYMENT_PENDINGになる
+     */
+    public function test_convenience_store_payment_creates_order_with_payment_pending_status()
+    {
+        // テスト用データを作成
+        /** @var \App\Models\User $user */
+        $user = User::factory()->create([
+            'email' => 'test@example.com',
+            'email_verified_at' => now(),
+        ]);
+
+        /** @var \App\Models\User $itemOwner */
+        $itemOwner = User::factory()->create([
+            'email' => 'owner@example.com',
+            'email_verified_at' => now(),
+        ]);
+
+        // カテゴリーを作成
+        $category = Category::create([
+            'category_names' => 'ファッション',
+        ]);
+
+        // ランダムな商品データを取得
+        $randomItemData = TestItemData::getRandomItems(1)[0];
+
+        // 商品を作成
+        $item = Item::factory()->create([
+            'user_id' => $itemOwner->id,
+            'is_sold' => false,
+            'item_names' => $randomItemData['item_names'],
+            'brand_names' => $randomItemData['brand_names'],
+            'item_prices' => $randomItemData['item_prices'],
+            'item_descriptions' => $randomItemData['item_descriptions'],
+            'conditions' => $randomItemData['conditions'],
+        ]);
+
+        // カテゴリを関連付け
+        $item->categories()->attach($category->id);
+
+        // 1. ユーザーにログインする
+        $this->actingAs($user);
+
+        // 2. 商品購入画面を開く
+        $purchaseFormResponse = $this->get("/purchase/{$item->id}");
+        $purchaseFormResponse->assertStatus(200);
+
+        // 3. コンビニ決済を選択して「購入する」ボタンを押下（Ajaxリクエスト）
+        $stripeResponse = $this->postJson("/item/{$item->id}/stripe/checkout", [
+            'item_id' => $item->id,
+            'payment_method' => 'convenience_store',
+            'shipping_address' => 'テスト住所',
+        ]);
+
+        // 期待挙動: JSONレスポンスが返される
+        $stripeResponse->assertStatus(200);
+        $stripeResponse->assertJsonStructure(['redirect_url']);
+
+        // 期待挙動: Orderレコードが作成されている
+        $this->assertDatabaseHas('orders', [
+            'user_id' => $user->id,
+            'item_id' => $item->id,
+            'payment_method' => 'convenience_store',
+            'payment_status' => Order::PAYMENT_STATUS_PAYMENT_PENDING,
+            'trade_status' => Order::TRADE_STATUS_TRADING,
+        ]);
+
+        // 期待挙動: 商品が売却済みになっている（コンビニ決済の場合は在庫予約）
+        $item->refresh();
+        $this->assertEquals(1, $item->is_sold); // 1 = 売却済み
+
+        // 期待挙動: フラッシュメッセージがセッションに保存されている
+        $this->assertTrue(session()->has('success'));
+        $this->assertStringContainsString('コンビニ支払', session('success'));
     }
 }
